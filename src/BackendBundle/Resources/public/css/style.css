@@ -177,6 +177,10 @@ h1.page-header {
     margin-top: 6px;
 }
 
+.small-margin-bottom {
+    margin-bottom: 6px;
+}
+
 .span-effort img {
     width: 19px;
     margin-left: 10px;
@@ -184,4 +188,12 @@ h1.page-header {
 
 span.label-notification {
     padding: 6px 10px;
+}
+
+.green-color {
+    color: green;
+}
+
+.red-color {
+    color: red;
 }

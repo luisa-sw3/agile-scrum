@@ -102,13 +102,13 @@ class ItemType extends AbstractType {
                 ->add('effortFibonacci', Type\ChoiceType::class, array(
                     'required' => false,
                     'placeholder' => $this->translator->trans('backend.global.select'),
-                    'label' => $this->translator->trans('backend.item.effort_estimation'),
+                    'label' => $this->translator->trans('backend.item.complexity'),
                     'choices' => $fibonacciOptions,
                 ))
                 ->add('effortTShirt', Type\ChoiceType::class, array(
                     'required' => false,
                     'placeholder' => $this->translator->trans('backend.global.select'),
-                    'label' => $this->translator->trans('backend.item.effort_estimation'),
+                    'label' => $this->translator->trans('backend.item.complexity'),
                     'choices' => $tShirtOptions,
                 ))
                 ->add('estimatedHours', Type\NumberType::class, array(

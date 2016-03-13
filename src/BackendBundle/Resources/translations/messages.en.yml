@@ -50,6 +50,8 @@ backend:
         hours: Hours
         all: "All"
         user: "User"
+        low: "Low"
+        high: "High"
         
     login:
         message: "Dear user, log in to access the admin area"
@@ -196,6 +198,7 @@ backend:
         priority: "Priority"
         estimated_hours: "Estimated Hours"
         effort_estimation: "Estimated Effort (Complexity)"
+        complexity: "Complexity"
         worked_hours: "Worked hours"
         designed_user: "Designed User"
         sprint: "Planned to Sprint"
