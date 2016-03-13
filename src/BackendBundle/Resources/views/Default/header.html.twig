@@ -73,8 +73,8 @@
                 {% for invitation in invitations %}    
                     <li class="notification">
                         <a href="#">{{'backend.project_invitation.invitation_to'|trans}} :<strong><br>{{ invitation.project.name }}</strong></a>
-                        <a href="{{ path('backend_notifications_accept',{'id':invitation.id}) }}" class="option"><span class="label label-success">{{'backend.global.accept'|trans}}</span></a>
-                        <a href="{{ path('backend_notifications',{'rejectInvitation':invitation.id}) }}" class="option"><span class="label label-danger">{{'backend.global.reject'|trans}}</span></a>
+                        <a href="{{ path('backend_notifications_accept',{'id':invitation.id}) }}" class="option"><span class="label label-success label-notification">{{'backend.global.accept'|trans}}</span></a>
+                        <a href="{{ path('backend_notifications',{'rejectInvitation':invitation.id}) }}" class="option"><span class="label label-danger label-notification">{{'backend.global.reject'|trans}}</span></a>
                     </li>
                 {% else %}
                     <li>

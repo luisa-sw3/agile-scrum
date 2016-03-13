@@ -17,6 +17,7 @@ use Util\Paginator;
 class ItemController extends Controller {
 
     const MENU = 'menu_project_backlog';
+    const MENU_SPRINTS = 'menu_project_sprints';
 
     /**
      * Permite listar el backlog de un proyecto
@@ -88,6 +89,13 @@ class ItemController extends Controller {
         $item = new Entity\Item();
         $item->setProject($project);
 
+        $menu = self::MENU;
+        if (!empty($request->get('sprintId'))) {
+            $sprint = $em->getRepository('BackendBundle:Sprint')->find($request->get('sprintId'));
+            $item->setSprint($sprint);
+            $menu = self::MENU_SPRINTS;
+        }
+        
         $form = $this->createForm(ItemType::class, $item);
         $form->handleRequest($request);
 
@@ -113,7 +121,8 @@ class ItemController extends Controller {
         return $this->render('BackendBundle:Project/ProductBacklog:new.html.twig', array(
                     'project' => $project,
                     'form' => $form->createView(),
-                    'menu' => self::MENU
+                    'item' => $item,
+                    'menu' => $menu,
         ));
     }
 
@@ -164,13 +173,18 @@ class ItemController extends Controller {
         $attachments = $em->getRepository('BackendBundle:ItemAttachment')->findBy($search, $order);
         $itemHistory = $em->getRepository('BackendBundle:ItemHistory')->findBy($search, array('date' => 'DESC'));
 
+        $menu = self::MENU;
+        if (!empty($request->get('sprintId'))){
+            $menu = self::MENU_SPRINTS;
+        }
+        
         return $this->render('BackendBundle:Project/ProductBacklog:edit.html.twig', array(
                     'item' => $item,
                     'attachments' => $attachments,
                     'itemHistory' => $itemHistory,
                     'project' => $item->getProject(),
                     'edit_form' => $editForm->createView(),
-                    'menu' => self::MENU,
+                    'menu' => $menu,
         ));
     }
 

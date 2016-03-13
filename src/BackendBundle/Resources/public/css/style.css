@@ -174,10 +174,14 @@ h1.page-header {
 }
 
 .small-margin-top {
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 .span-effort img {
     width: 19px;
     margin-left: 10px;
+}
+
+span.label-notification {
+    padding: 6px 10px;
 }

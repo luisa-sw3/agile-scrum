@@ -458,37 +458,37 @@ class Item {
                 $class = '';
                 break;
             case self::STATUS_INVESTIGATING:
-                $class = 'label label-info';
+                $class = 'label label-info label-notification';
                 break;
             case self::STATUS_CONFIRMED:
-                $class = 'label label-default';
+                $class = 'label label-default label-notification';
                 break;
             case self::STATUS_NOT_A_BUG:
-                $class = 'label label-success';
+                $class = 'label label-success label-notification';
                 break;
             case self::STATUS_BEING_WORKED_ON:
-                $class = 'label label-default';
+                $class = 'label label-default label-notification';
                 break;
             case self::STATUS_NEAR_COMPLETION:
-                $class = 'label label-default';
+                $class = 'label label-default label-notification';
                 break;
             case self::STATUS_READY_FOR_TESTING:
-                $class = 'label label-primary';
+                $class = 'label label-primary label-notification';
                 break;
             case self::STATUS_TESTING:
-                $class = 'label label-primary';
+                $class = 'label label-primary label-notification';
                 break;
             case self::STATUS_CANCELED:
-                $class = 'label label-danger';
+                $class = 'label label-danger label-notification';
                 break;
             case self::STATUS_POSTPONED:
-                $class = 'label label-warning';
+                $class = 'label label-warning label-notification';
                 break;
             case self::STATUS_DONE:
-                $class = 'label label-success';
+                $class = 'label label-success label-notification';
                 break;
             case self::STATUS_FIXED:
-                $class = 'label label-success';
+                $class = 'label label-success label-notification';
                 break;
             default:
                 break;

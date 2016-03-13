@@ -10,9 +10,17 @@
             </h1>
 
             {% set item2 = {'text': project.name, 'url':path('backend_projects_view',{'id':project.id}),'icon':'fa fa-dashboard'} %}
-            {% set item3 = {'text': 'backend.backlog.product_backlog'|trans, 'url':path('backend_project_product_backlog',{'id':project.id}), 'icon':'fa fa-list'} %}
-            {% set item4 = {'text': 'backend.item.edit'|trans, 'icon':'fa fa-pencil'} %}
-            {% set items = [item2, item3, item4] %}
+            {% if app.request.get('sprintId') is empty %}
+                {% set item3 = {'text': 'backend.backlog.product_backlog'|trans, 'url':path('backend_project_product_backlog',{'id':project.id}), 'icon':'fa fa-list'} %}
+                {% set item4 = {'text': 'backend.item.edit'|trans, 'icon':'fa fa-pencil'} %}
+                {% set items = [item2, item3, item4] %}
+            {% else %}
+                {% set item3 = {'text': 'backend.sprint.sprints'|trans, 'url':path('backend_project_sprints',{'id':project.id}), 'icon':'fa fa-rotate-right'} %}
+                {% set item4 = {'text': item.sprint, 'url':path('backend_project_sprints_backlog',{'id':project.id,'sprintId':item.sprint.id}),'icon':'fa fa-list'} %}
+                {% set item5 = {'text': 'backend.item.edit'|trans, 'icon':'fa fa-pencil'} %}
+                {% set items = [item2, item3, item4, item5] %}
+            {% endif %}
+            
             {{ filters.breadcrum(items) }}
         </div>
     </div>
@@ -101,9 +109,8 @@
                 <div class="form-group no-margin-bottom">
                     <table class="table table-bordered no-margin-bottom">
                         <tr id="table-header">
-                            <th width="100px;">{{'backend.global.date'|trans}}</th>
+                            <th width="130px;">{{'backend.global.date'|trans}}</th>
                             <th>{{'backend.item_history.event'|trans}}</th>
-                            <th width="100px;">{{'backend.global.user'|trans}}</th>
                         </tr>
                     </table>
                 </div>
@@ -111,9 +118,10 @@
                     <table class="table table-bordered table-hover">
                         {% for event in itemHistory %}
                             <tr>
-                                <td width="100px;">
+                                <td width="130px;">
                                     {{event.date|date(project.settings.dateFormat)}}<br>
-                                    {{event.date|date(project.settings.hourFormat)}}
+                                    {{event.date|date(project.settings.hourFormat)}}<br>
+                                    <i class="fa fa-user"></i> {{event.userOwner}}
                                 </td>
                                 <td>
                                     {{ event.getTextAction|trans ~event.actionSufix }}
@@ -135,13 +143,10 @@
                                         </table>
                                     {% endif %}
                                 </td>
-                                <td width="100px;">
-                                    {{event.userOwner}}
-                                </td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="3">{{'backend.item_history.empty_list'|trans}}</td>
+                                <td colspan="2">{{'backend.item_history.empty_list'|trans}}</td>
                             </tr>
                         {% endfor %}
                     </table>
