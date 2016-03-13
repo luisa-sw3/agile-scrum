@@ -213,7 +213,7 @@ backend:
         simple_delete: "Simple Delete"
         simple_delete_message: "Only removes the selected item"
         
-        type_user_history: "User History"
+        type_user_history: "User Story"
         type_feature: "Feature"
         type_task: "Task"
         type_bug: "Bug"

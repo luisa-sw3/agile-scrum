@@ -63,7 +63,7 @@ class DefaultController extends Controller {
                 $em->flush();
 
                 $message = $this->get('translator')->trans('backend.user.message_account_created_1');
-                $message .= $user->getEmail();
+                $message .= '<strong>'.$user->getEmail().'</strong>';
                 $message .= $this->get('translator')->trans('backend.user.message_account_created_2');
                 $this->get('session')->getFlashBag()->add('messageFrontendSuccess', $message);
 

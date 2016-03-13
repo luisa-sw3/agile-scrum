@@ -28,7 +28,8 @@ class UserType extends AbstractType {
                     'required' => true,
                     'label' => $this->translator->trans('backend.user.name'),
                     'attr' => array(
-                        'placeholder' => $this->translator->trans('backend.user.name')
+                        'placeholder' => $this->translator->trans('backend.user.name'),
+                        'maxlength' => 30,
                     )
                 ))
                 ->add('lastname', Type\TextType::class, array(
@@ -36,6 +37,7 @@ class UserType extends AbstractType {
                     'label' => $this->translator->trans('backend.user.lastname'),
                     'attr' => array(
                         'placeholder' => $this->translator->trans('backend.user.lastname'),
+                        'maxlength' => 30,
                     )
                 ))
                 ->add('cellphone', Type\NumberType::class, array(
@@ -43,6 +45,7 @@ class UserType extends AbstractType {
                     'label' => $this->translator->trans('backend.user.cellphone'),
                     'attr' => array(
                         'placeholder' => $this->translator->trans('backend.user.cellphone'),
+                        'maxlength' => 15,
                     )
                 ))
                 ->add('email', Type\RepeatedType::class, array(
