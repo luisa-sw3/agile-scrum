@@ -870,10 +870,10 @@ class ItemController extends Controller {
         //almacenamos el evento en el historial
         if (!$previousSprint && $sprint) {
             $changes = array('before' => $this->translator->trans('backend.item.no_sprint'), 'after' => $sprint . "");
-            $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_SPRINT_COPIED, $changes, " : " . $sprint);
+            $this->container->get('app_history')->saveItemHistory($newItem, Entity\ItemHistory::ITEM_SPRINT_COPIED, $changes, " : " . $sprint);
         } elseif ($previousSprint && $sprint) {
             $changes = array('before' => $previousSprint . "", 'after' => $sprint . "");
-            $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_SPRINT_COPIED, $changes, " : " . $sprint);
+            $this->container->get('app_history')->saveItemHistory($newItem, Entity\ItemHistory::ITEM_SPRINT_COPIED, $changes, " : " . $sprint);
         }
         return $newItem;
     }
