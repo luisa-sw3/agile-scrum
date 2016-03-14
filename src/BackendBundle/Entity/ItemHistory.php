@@ -35,6 +35,7 @@ class ItemHistory {
     const ITEM_ATTACHMENT_DELETED = 15; //An attachment has been deleted
     const ITEM_STATUS_MODIFIED = 16; //the item status has been modified
     const ITEM_USER_ASSIGN_CLEARED = 17; //the item asignation has been cleared
+    const ITEM_SPRINT_COPIED = 18; //the item has been copied to sprint
     
     /**
      * @ORM\Id
@@ -213,6 +214,9 @@ class ItemHistory {
                 break;
             case self::ITEM_USER_ASSIGN_CLEARED:
                 $langVar = 'backend.item_history.item_assign_cleared';
+                break;
+            case self::ITEM_SPRINT_COPIED:
+                $langVar = 'backend.item_history.item_sprint_copied';
                 break;
             default:
                 break;

@@ -113,6 +113,14 @@ services:
             - "@service_container"
         tags:
             - { name: form.type }
+            
+    #servicio para formulario de mover items entre sprints
+    backend.form.type.item_move_to_sprint:
+        class: BackendBundle\Form\MoveItemToSprintType
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: form.type }
     
     #servicio para formulario de sprints de un proyecto
     backend.form.type.sprint:

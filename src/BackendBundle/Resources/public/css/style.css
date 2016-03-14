@@ -197,3 +197,12 @@ span.label-notification {
 .red-color {
     color: red;
 }
+
+.container-radios input {
+    margin-right: 8px;
+}
+
+.container-radios label {
+    margin-right: 8px;
+    font-weight: normal;
+}

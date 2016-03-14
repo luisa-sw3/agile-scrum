@@ -52,6 +52,8 @@ backend:
         user: "User"
         low: "Low"
         high: "High"
+        select_action: "Select an action"
+        select_method: "Select a method"
         
     login:
         message: "Dear user, log in to access the admin area"
@@ -247,6 +249,8 @@ backend:
         change_status: "Change Status"
         
         worked_estimated_time: "Worked Time / Estimated Time"
+        move_copy_other_sprint: "Move or Copy to other Sprint"
+        select_sprint: "Select Sprint"
         
     backlog:
         product_backlog: "Product Backlog"
@@ -343,4 +347,5 @@ backend:
         item_attachment_deleted: "An attachment has been deleted"
         item_status_modified: "The item status has been modified"
         item_assign_cleared: "The item assignation has been cleared"
+        item_sprint_copied: "The item has been copied to sprint"
         

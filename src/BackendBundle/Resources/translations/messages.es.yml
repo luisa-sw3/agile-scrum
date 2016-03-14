@@ -52,6 +52,8 @@ backend:
         user: "Usuario"
         low: "Baja"
         high: "Alta"
+        select_action: "Seleccione una acción"
+        select_method: "Seleccione el método"
     
     login:
         message: "Ingrese para acceder al área administrativa"
@@ -247,6 +249,8 @@ backend:
         change_status: "Cambiar Estado"
         
         worked_estimated_time: "Tiempo Trabajado / Tiempo Estimado"
+        move_copy_other_sprint: "Mover o Copiar a otro Sprint"
+        select_sprint: "Seleccione Sprint"
         
     backlog:
         product_backlog: "Pila del Producto"
@@ -342,3 +346,4 @@ backend:
         item_attachment_deleted: "Se ha eliminado un archivo adjunto"
         item_status_modified: "El estado del elemento ha sido modificado"
         item_assign_cleared: "Se ha desasignado el usuario del elemento"
+        item_sprint_copied: "El elemento se ha copiado al sprint"
