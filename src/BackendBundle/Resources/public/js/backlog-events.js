@@ -7,44 +7,46 @@ $(document).ready(function () {
     /**
      * Codigo para eventod drag and drop en el backlog
      */
-    $("ol.vertical").sortable({
-        group: 'simple_with_animation',
-        pullPlaceholder: true,
-        // animation on drop
-        // item es el elemento que estamos arrastrando
-        onDrop: function ($item, container, _super) {
+    if (!is_mobile_device) {
+        $("ol.vertical").sortable({
+            group: 'simple_with_animation',
+            pullPlaceholder: true,
+            // animation on drop
+            // item es el elemento que estamos arrastrando
+            onDrop: function ($item, container, _super) {
 
-            var $clonedItem = $('<li/>').css({height: 0});
-            $item.before($clonedItem);
-            $clonedItem.animate({'height': $item.height()});
+                var $clonedItem = $('<li/>').css({height: 0});
+                $item.before($clonedItem);
+                $clonedItem.animate({'height': $item.height()});
 
-            $item.animate($clonedItem.position(), function () {
-                $clonedItem.detach();
+                $item.animate($clonedItem.position(), function () {
+                    $clonedItem.detach();
+                    _super($item, container);
+                    //container el es el contenedor en donde se esta moviendo el elemento
+                    moveItem($item, container);
+                });
+            },
+            // set $item relative to cursor position
+            onDragStart: function ($item, container, _super) {
+                var offset = $item.offset(),
+                        pointer = container.rootGroup.pointer;
+
+                adjustment = {
+                    left: pointer.left - offset.left,
+                    top: pointer.top - offset.top
+                };
+
                 _super($item, container);
-                //container el es el contenedor en donde se esta moviendo el elemento
-                moveItem($item, container);
-            });
-        },
-        // set $item relative to cursor position
-        onDragStart: function ($item, container, _super) {
-            var offset = $item.offset(),
-                    pointer = container.rootGroup.pointer;
-
-            adjustment = {
-                left: pointer.left - offset.left,
-                top: pointer.top - offset.top
-            };
-
-            _super($item, container);
-        },
-        //item es el elemento que estamos arrastrando
-        onDrag: function ($item, position) {
-            $item.css({
-                left: position.left - adjustment.left,
-                top: position.top - adjustment.top
-            });
-        }
-    });
+            },
+            //item es el elemento que estamos arrastrando
+            onDrag: function ($item, position) {
+                $item.css({
+                    left: position.left - adjustment.left,
+                    top: position.top - adjustment.top
+                });
+            }
+        });
+    }
 
     $(".create-related-item").fancybox({
         width: '840px',
