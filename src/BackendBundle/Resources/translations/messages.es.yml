@@ -249,8 +249,10 @@ backend:
         change_status: "Cambiar Estado"
         
         worked_estimated_time: "Tiempo Trabajado / Tiempo Estimado"
-        move_copy_other_sprint: "Mover o Copiar a otro Sprint"
+        move_copy_other_sprint: "Mover / Copiar a Sprint"
         select_sprint: "Seleccione Sprint"
+        move_copy_other_project: "Mover / Copiar a Proyecto"
+        select_project: "Seleccione Proyecto"
         
     backlog:
         product_backlog: "Pila del Producto"
@@ -347,3 +349,5 @@ backend:
         item_status_modified: "El estado del elemento ha sido modificado"
         item_assign_cleared: "Se ha desasignado el usuario del elemento"
         item_sprint_copied: "El elemento se ha copiado al sprint"
+        item_project_copied: "El elemento se ha copiado al proyecto"
+        item_project_moved: "El elemento se ha movido al proyecto"

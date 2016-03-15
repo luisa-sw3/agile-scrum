@@ -11,6 +11,7 @@ use BackendBundle\Form\SearchItemType;
 use BackendBundle\Entity as Entity;
 use Util\Paginator;
 use BackendBundle\Form\MoveItemToSprintType;
+use BackendBundle\Form\MoveItemToProjectType;
 
 /**
  * Item controller.
@@ -777,14 +778,22 @@ class ItemController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
 
             $parameters = $request->request->get('backendbundle_item_move_to_sprint_type');
-            if (isset($parameters['action']) && isset($parameters['method']) && isset($parameters['sprint'])) {
+            if (isset($parameters['action']) && isset($parameters['method']) && isset($parameters['new_sprint'])) {
                 $action = $parameters['action'];
                 $method = $parameters['method'];
-                $sprint = $em->getRepository('BackendBundle:Sprint')->find($parameters['sprint']);
+                $sprint = $em->getRepository('BackendBundle:Sprint')->find($parameters['new_sprint']);
 
                 if ($action == MoveItemToSprintType::MOVE_TO_SPRINT) {
 
                     $this->changeSprintToItem($item, $previousSprint, $sprint, null);
+
+                    if ($method == MoveItemToSprintType::ACTION_METHOD_SIMPLE) {
+                        foreach ($item->getChildren() as $child) {
+                            $child->setParent(null);
+                            $em->persist($child);
+                        }
+                        $em->flush();
+                    }
 
                     if ($method == MoveItemToSprintType::ACTION_METHOD_CASCADE) {
                         foreach ($item->getChildren() as $child) {
@@ -798,8 +807,7 @@ class ItemController extends Controller {
 
                     if ($method == MoveItemToSprintType::ACTION_METHOD_CASCADE) {
                         foreach ($item->getChildren() as $child) {
-                            $prevSprint = $child->getSprint();
-                            $this->copyItemToSprint($child, $prevSprint, $sprint, $newItem);
+                            $this->copyItemToSprint($child, $child->getSprint(), $sprint, $newItem);
                         }
                     }
                     $closeFancy = true;
@@ -835,7 +843,7 @@ class ItemController extends Controller {
 
         //guardamos el registro en historial
         if (!$previousSprint && $sprint) {
-            $changes = array('before' => $this->translator->trans('backend.item.no_sprint'), 'after' => $sprint . "");
+            $changes = array('before' => $this->get('translator')->trans('backend.item.no_sprint'), 'after' => $sprint . "");
             $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_SPRINT_ASSIGNED, $changes, " : " . $sprint);
         } elseif ($previousSprint && $sprint) {
             $changes = array('before' => $previousSprint . "", 'after' => $sprint . "");
@@ -861,20 +869,148 @@ class ItemController extends Controller {
         $em->persist($newItem);
         $em->flush();
 
-        //Seteamos de nuevo el Sprint al item anterior (Por alguna razon toma el nuevo Sprint)
-        $item->setSprint($previousSprint);
-        $em->persist($item);
-
-        $em->flush();
-
         //almacenamos el evento en el historial
         if (!$previousSprint && $sprint) {
-            $changes = array('before' => $this->translator->trans('backend.item.no_sprint'), 'after' => $sprint . "");
+            $changes = array('before' => $this->get('translator')->trans('backend.item.no_sprint'), 'after' => $sprint . "");
             $this->container->get('app_history')->saveItemHistory($newItem, Entity\ItemHistory::ITEM_SPRINT_COPIED, $changes, " : " . $sprint);
         } elseif ($previousSprint && $sprint) {
             $changes = array('before' => $previousSprint . "", 'after' => $sprint . "");
             $this->container->get('app_history')->saveItemHistory($newItem, Entity\ItemHistory::ITEM_SPRINT_COPIED, $changes, " : " . $sprint);
         }
+        return $newItem;
+    }
+
+    /**
+     * Esta funcion permite validar y realizar el proceso de copiar o mover items 
+     * entre Proyectos, ya sea mover o copiar solo el item, o tambien mover o copiar
+     * todos los items dependientes del mismo
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 14/03/2016
+     * @param Request $request
+     * @param string $id identificador del proyecto
+     * @param string $itemId identificador del item
+     * @return type
+     */
+    public function copyMoveToProjectAction(Request $request, $id, $itemId) {
+        $em = $this->getDoctrine()->getManager();
+
+        $project = $em->getRepository('BackendBundle:Project')->find($id);
+        $item = $em->getRepository('BackendBundle:Item')->find($itemId);
+        $previousProject = $item->getProject();
+
+        if (!$project || ($project && !$this->container->get('access_control')->isAllowedProject($project->getId()))) {
+            $this->get('session')->getFlashBag()->add('messageError', $this->get('translator')->trans('backend.project.not_found_message'));
+            return $this->redirectToRoute('backend_projects');
+        }
+
+        if (!$item || ($item && $item->getProject()->getId() != $project->getId())) {
+            $this->get('session')->getFlashBag()->add('messageError', $this->get('translator')->trans('backend.item.not_found_message'));
+            return $this->redirectToRoute('backend_projects');
+        }
+
+        $closeFancy = false;
+        $form = $this->createForm(MoveItemToProjectType::class, $item);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $parameters = $request->request->get('backendbundle_item_move_to_project_type');
+            if (isset($parameters['action']) && isset($parameters['method']) && isset($parameters['user_project'])) {
+                $action = $parameters['action'];
+                $method = $parameters['method'];
+                $userProject = $em->getRepository('BackendBundle:UserProject')->find($parameters['user_project']);
+                $newProject = null;
+                if ($userProject instanceof Entity\UserProject) {
+                    $newProject = $userProject->getProject();
+                }
+
+                
+                if ($action == MoveItemToProjectType::MOVE_TO_PROJECT && $newProject) {
+
+                    $this->changeProjectToItem($item, $previousProject, $newProject, null);
+
+                    if ($method == MoveItemToProjectType::ACTION_METHOD_SIMPLE) {
+                        foreach ($item->getChildren() as $child) {
+                            $child->setParent(null);
+                            $em->persist($child);
+                        }
+                        $em->flush();
+                    }
+
+                    if ($method == MoveItemToProjectType::ACTION_METHOD_CASCADE) {
+                        foreach ($item->getChildren() as $child) {
+                            $this->changeProjectToItem($child, $child->getProject(), $newProject, $item);
+                        }
+                    }
+                    $closeFancy = true;
+                } elseif ($action == MoveItemToProjectType::COPY_TO_PROJECT && $newProject) {
+
+                    $newItem = $this->copyItemToProject($item, $previousProject, $newProject, null);
+
+                    if ($method == MoveItemToProjectType::ACTION_METHOD_CASCADE) {
+                        foreach ($item->getChildren() as $child) {
+                            $this->copyItemToProject($child, $child->getProject(), $newProject, $newItem);
+                        }
+                    }
+                    $closeFancy = true;
+                }
+            }
+        }
+
+        return $this->render('BackendBundle:Project/ProductBacklog:copyMoveToProject.html.twig', array(
+                    'project' => $project,
+                    'item' => $item,
+                    'form' => $form->createView(),
+                    'menu' => self::MENU,
+                    'closeFancy' => $closeFancy,
+        ));
+    }
+
+    /**
+     * Esta funcion permite cambiarle el proyecto a un elemento
+     * y registrar el evento en un historial
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 14/03/2016
+     * @param Entity\Item $item
+     * @param Entity\Project $previousProject
+     * @param Entity\Project $newProject
+     * @param Entity\Item|null $parent
+     */
+    private function changeProjectToItem($item, $previousProject, $newProject, $parent) {
+        $em = $this->getDoctrine()->getManager();
+        //cambiamos el Proyecto del item
+        $item->setSprint(null);
+        $item->setParent($parent);
+        $item->setProject($newProject);
+        $em->persist($item);
+        $em->flush();
+
+        //guardamos el registro en historial
+        $changes = array('before' => $previousProject . "", 'after' => $newProject . "");
+        $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_PROJECT_MOVED, $changes, " : " . $newProject);
+    }
+
+    /**
+     * Esta funcion permite duplicar un item en otro proyecto
+     * y almacenar el evento en el historial del item
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 14/03/2016
+     * @param Entity\Item $item
+     * @param Entity\Project $previousProject
+     * @param Entity\Project $newProject
+     * @param Entity\Item|null $parent
+     * @return Entity\Item
+     */
+    public function copyItemToProject($item, $previousProject, $newProject, $parent) {
+        $em = $this->getDoctrine()->getManager();
+        //Duplicamos el item y le asignamos el nuevo Sprint
+        $newItem = clone $item;
+        $newItem->setSprint(null);
+        $newItem->setParent($parent);
+        $newItem->setProject($newProject);
+        $em->persist($newItem);
+        $em->flush();
+
+        //almacenamos el evento en el historial
+        $changes = array('before' => $previousProject . "", 'after' => $newProject . "");
+        $this->container->get('app_history')->saveItemHistory($newItem, Entity\ItemHistory::ITEM_PROJECT_COPIED, $changes, " : " . $newProject);
         return $newItem;
     }
 

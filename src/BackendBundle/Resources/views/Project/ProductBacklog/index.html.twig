@@ -56,7 +56,24 @@
     </div>
 
     {% set dateFormat = project.settings.dateFormat %}
-    <div class="table-responsive">
+    
+    <div class="rstable">
+        {% for item in pagination %}
+            <div class="col-lg-12 col-md-12 col-xs-12 no-padding-right main-item">
+                {{ filters.itemDescription(item, project, false, true, true, false) }}
+                {% if item.children is not empty %}
+                    <div class="list-group col-lg-12 col-md-12 container-child no-padding-right">
+                        {% for firstChild in item.children %}
+                            {{ filters.itemDescription(firstChild, project, false, true, true, false) }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    
+    
+    {#<div class="table-responsive">
         <table class="table table-bordered table-hover no-margin-bottom">
             <tr>
                 <th>#</th>
@@ -118,10 +135,34 @@
         <div class="navigation pull-right">
             {{ knp_pagination_render(pagination) }}
         </div>
-    </div>
+    </div>#}
 {% endblock %}
 
 {% block scripts %}
     $("#backendbundle_search_item_type_item_type").val("{{ pagination.params.item_type|default('')}}");
     $("#backendbundle_search_item_type_item_designed_user").val("{{ pagination.params.item_designed_user|default('')}}");
+    
+    $(".create-related-item").fancybox({
+        width: '840px',
+        height: '500px',
+        autoSize: true,
+        autoScale: false,
+        autoDimensions: false,
+    });
+        
+    $(".copy-move-to-sprint").fancybox({
+        width: '500px',
+        height: '350px',
+        autoSize: true,
+        autoScale: false,
+        autoDimensions: false,
+    });
+        
+    $(".copy-move-to-project").fancybox({
+        width: '500px',
+        height: '350px',
+        autoSize: true,
+        autoScale: false,
+        autoDimensions: false,
+    });
 {% endblock %}

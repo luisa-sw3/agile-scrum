@@ -36,6 +36,8 @@ class ItemHistory {
     const ITEM_STATUS_MODIFIED = 16; //the item status has been modified
     const ITEM_USER_ASSIGN_CLEARED = 17; //the item asignation has been cleared
     const ITEM_SPRINT_COPIED = 18; //the item has been copied to sprint
+    const ITEM_PROJECT_MOVED = 19; //the item has been moved to project
+    const ITEM_PROJECT_COPIED = 20; //the item has been copied to project
     
     /**
      * @ORM\Id
@@ -217,6 +219,12 @@ class ItemHistory {
                 break;
             case self::ITEM_SPRINT_COPIED:
                 $langVar = 'backend.item_history.item_sprint_copied';
+                break;
+            case self::ITEM_PROJECT_MOVED:
+                $langVar = 'backend.item_history.item_project_moved';
+                break;
+            case self::ITEM_PROJECT_COPIED:
+                $langVar = 'backend.item_history.item_project_copied';
                 break;
             default:
                 break;

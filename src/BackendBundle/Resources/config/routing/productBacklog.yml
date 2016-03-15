@@ -77,3 +77,8 @@ backend_project_product_backlog_copy_move_to_sprint:
     path:     /{itemId}/copyMoveToSprint
     defaults: { _controller: "BackendBundle:Item:copyMoveToSprint" }
     methods:  [GET, POST]
+
+backend_project_product_backlog_copy_move_to_project:
+    path:     /{itemId}/copyMoveToProject
+    defaults: { _controller: "BackendBundle:Item:copyMoveToProject" }
+    methods:  [GET, POST]

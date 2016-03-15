@@ -14,19 +14,21 @@ use Symfony\Component\Form\FormEvent;
 use BackendBundle\Entity\Item;
 use BackendBundle\Entity\Sprint;
 
-class MoveItemToSprintType extends AbstractType {
+class MoveItemToProjectType extends AbstractType {
 
     private $container;
     private $translator;
-
-    const MOVE_TO_SPRINT = 'move';
-    const COPY_TO_SPRINT = 'copy';
+    private $tokenStorage;
+    
+    const MOVE_TO_PROJECT = 'move';
+    const COPY_TO_PROJECT = 'copy';
     const ACTION_METHOD_CASCADE = 'cascade';
     const ACTION_METHOD_SIMPLE = 'simple';
 
-    public function __construct(Container $container) {
+    public function __construct(Container $container, $tokenStorage) {
         $this->container = $container;
         $this->translator = $this->container->get('translator');
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -40,20 +42,20 @@ class MoveItemToSprintType extends AbstractType {
             $form = $event->getForm();
             if ($data instanceof Item) {
                 $project = $data->getProject();
-                $sprintId = ($data->getSprint() ? $data->getSprint()->getId() : 0);
+                $userId = $this->tokenStorage->getToken()->getUser()->getId();
                 $form
-                        ->add('new_sprint', EntityType::class, array(
-                            'class' => 'BackendBundle:Sprint',
+                        ->add('user_project', EntityType::class, array(
+                            'class' => 'BackendBundle:UserProject',
                             'mapped' => false,
-                            'query_builder' => function (EntityRepository $er) use ($project, $sprintId) {
-                                return $er->createQueryBuilder('s')
-                                        ->where(($project != null ? "s.project = '" . $project->getId() . "' "
-                                        . "AND s.id <> '".$sprintId."' "
-                                        . "AND (s.status = ".Sprint::STATUS_PLANNED." OR s.status = ".Sprint::STATUS_IN_PROCESS.")" : "1=1"))
-                                        ->orderBy('s.name', 'ASC');
+                            'query_builder' => function (EntityRepository $er) use ($project, $userId) {
+                                return $er->createQueryBuilder('usp')
+                                        ->join("BackendBundle:Project", "p")
+                                        ->where("usp.user = '".$userId."'")
+                                        ->andWhere("usp.project <> '".$project->getId()."'")
+                                        ->orderBy('p.name', 'ASC');
                             },
                             'required' => true,
-                            'label' => $this->translator->trans('backend.item.select_sprint'),
+                            'label' => $this->translator->trans('backend.item.select_project'),
                             'placeholder' => $this->translator->trans('backend.global.select'),
                 ));
             }
@@ -67,8 +69,8 @@ class MoveItemToSprintType extends AbstractType {
                     'expanded' => true,
                     'label' => $this->translator->trans('backend.global.select_action'),
                     'choices' => array(
-                        'Move' => self::MOVE_TO_SPRINT,
-                        'Copy' => self::COPY_TO_SPRINT
+                        'Move' => self::MOVE_TO_PROJECT,
+                        'Copy' => self::COPY_TO_PROJECT
                     ),
                 ))
                 ->add('method', Type\ChoiceType::class, array(
@@ -97,7 +99,7 @@ class MoveItemToSprintType extends AbstractType {
      * @return string
      */
     public function getBlockPrefix() {
-        return 'backendbundle_item_move_to_sprint_type';
+        return 'backendbundle_item_move_to_project_type';
     }
 
 }

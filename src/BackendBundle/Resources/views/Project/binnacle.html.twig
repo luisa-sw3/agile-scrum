@@ -31,11 +31,11 @@
             {% endif %}
             
             <div class="col-lg-12 col-md-12 col-xs-12 no-padding-right main-item">
-                {{ filters.itemDescription(item, project, null, true) }}
+                {{ filters.itemDescription(item, project, false, true, false, true) }}
                 {% if item.children is not empty %}
                     <div class="list-group col-lg-12 col-md-12 container-child no-padding-right">
                         {% for firstChild in item.children %}
-                            {{ filters.itemDescription(firstChild, project, null, true) }}
+                            {{ filters.itemDescription(firstChild, project, false, true, false, true) }}
                         {% endfor %}
                     </div>
                 {% endif %}

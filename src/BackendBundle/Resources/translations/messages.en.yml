@@ -249,8 +249,10 @@ backend:
         change_status: "Change Status"
         
         worked_estimated_time: "Worked Time / Estimated Time"
-        move_copy_other_sprint: "Move or Copy to other Sprint"
+        move_copy_other_sprint: "Move / Copy to Sprint"
         select_sprint: "Select Sprint"
+        move_copy_other_project: "Move / Copy to Project"
+        select_project: "Select Project"
         
     backlog:
         product_backlog: "Product Backlog"
@@ -348,4 +350,6 @@ backend:
         item_status_modified: "The item status has been modified"
         item_assign_cleared: "The item assignation has been cleared"
         item_sprint_copied: "The item has been copied to sprint"
+        item_project_copied: "The item has been copied to project"
+        item_project_moved: "The item has been moved to project"
         

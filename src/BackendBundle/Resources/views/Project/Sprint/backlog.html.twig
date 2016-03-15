@@ -89,32 +89,32 @@
                 {% for item in sprintBacklog %}
                     
                     <li item-id='{{item.id}}' parent="{{constant('BackendBundle\\Entity\\Item::EMPTY_PARENT')}}" priority="{{item.priority|default(0)}}" class="backlog-item">
-                        {{ filters.itemDescription(item, project, sprint, true) }}
+                        {{ filters.itemDescription(item, project, true, true) }}
                         {% if item.children is not empty %}
                             <ol parent='{{item.id}}' >
                                 {% for firstChild in item.children %}
                                     <li item-id='{{firstChild.id}}' parent='{{item.id}}' priority="{{firstChild.priority|default(0)}}" class="backlog-item">
-                                        {{ filters.itemDescription(firstChild, project, sprint, true) }}
+                                        {{ filters.itemDescription(firstChild, project, true, true) }}
                                         {% if firstChild.children is not empty %}
                                             <ol parent='{{firstChild.id}}'>
                                                 {% for secondChild in firstChild.children %}
                                                     <li item-id='{{secondChild.id}}' parent='{{firstChild.id}}' priority="{{secondChild.priority|default(0)}}" class="backlog-item">
-                                                        {{ filters.itemDescription(secondChild, project, sprint, true) }}
+                                                        {{ filters.itemDescription(secondChild, project, true, true) }}
                                                         {% if secondChild.children is not empty %}
                                                             <ol parent='{{secondChild.id}}'>
                                                                 {% for thirdChild in secondChild.children %}
                                                                     <li item-id='{{thirdChild.id}}' parent='{{secondChild.id}}' priority="{{thirdChild.priority|default(0)}}" class="backlog-item">
-                                                                        {{ filters.itemDescription(thirdChild, project, sprint, true) }}
+                                                                        {{ filters.itemDescription(thirdChild, project, true, true) }}
                                                                         {% if thirdChild.children is not empty %}
                                                                             <ol parent='{{thirdChild.id}}'>
                                                                                 {% for fourtChild in thirdChild.children %}
                                                                                     <li item-id='{{fourtChild.id}}' parent='{{thirdChild.id}}' priority="{{fourtChild.priority|default(0)}}" class="backlog-item">
-                                                                                        {{ filters.itemDescription(fourtChild, project, sprint, false) }}
+                                                                                        {{ filters.itemDescription(fourtChild, project, true, false) }}
                                                                                         {% if fourtChild.children is not empty %}
                                                                                             <ol parent='{{fourtChild.id}}'>
                                                                                                 {% for fifthChild in fourtChild.children %}
                                                                                                     <li item-id='{{fifthChild.id}}' parent='{{fourtChild.id}}' priority="{{fifthChild.priority|default(0)}}" class="backlog-item">
-                                                                                                        {{ filters.itemDescription(fifthChild, project, sprint, false) }}
+                                                                                                        {{ filters.itemDescription(fifthChild, project, true, false) }}
                                                                                                     </li>
                                                                                                 {% endfor %}
                                                                                             </ol>
@@ -230,7 +230,13 @@
             autoDimensions: false,
         });
         
-        
+        $(".copy-move-to-project").fancybox({
+            width: '500px',
+            height: '350px',
+            autoSize: true,
+            autoScale: false,
+            autoDimensions: false,
+        });
 
         {# Codigo para que el cliente pueda eliminar items #}
         $(".delete-item").click(function () {
