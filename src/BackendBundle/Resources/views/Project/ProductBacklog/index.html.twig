@@ -57,23 +57,8 @@
 
     {% set dateFormat = project.settings.dateFormat %}
 
-    {#<div class="rstable">
-        {% for item in pagination %}
-            <div class="col-lg-12 col-md-12 col-xs-12 no-padding-right main-item">
-                {{ filters.itemDescription(item, project, true, true, false) }}
-                {% if item.children is not empty %}
-                    <div class="list-group col-lg-12 col-md-12 container-child no-padding-right">
-                        {% for firstChild in item.children %}
-                            {{ filters.itemDescription(firstChild, project, true, true, false) }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div>#}
     <div class="col-lg-12 no-padding-sides">
         <div class="rstable">
-
             <ol parent="{{constant('BackendBundle\\Entity\\Item::EMPTY_PARENT')}}" class="default vertical">
                 {% for item in pagination %}
                     <li item-id='{{item.id}}' parent="{{constant('BackendBundle\\Entity\\Item::EMPTY_PARENT')}}" priority="{{item.priority|default(0)}}" class="backlog-item">
@@ -132,6 +117,8 @@
                             <ol parent="{{item.id}}"></ol>
                         {% endif %}
                     </li>
+                {% else %}
+                    {{'backend.backlog.empty_list'|trans}}
                 {% endfor %}
             </ol>
         </div>
@@ -168,34 +155,7 @@
                     {{ knp_pagination_sortable(pagination, 'backend.item.effort_estimation'|trans, [effortOrder]) }}
                     {{ filters.sortIcon(effortOrder, pagination) }} 
                 </th>
-                <th>{{ 'backend.global.options'|trans }}</th>
             </tr>
-
-            {% for item in pagination %}
-                <tr {% if loop.index is odd %}class="color"{% endif %}>
-                    <td><a href="{{ path('backend_project_product_backlog_edit',{'id':project.id, 'itemId':item.id}) }}">{{item.consecutive}}</a></td>
-                    <td><a href="{{ path('backend_project_product_backlog_edit',{'id':project.id, 'itemId':item.id}) }}" class="popover-menu" title="{{ item.title }}" content="{{item.description|escape|raw}}">{{ item.title }}</a></td>
-                    <td>{{ item.getTextType()|trans }}</td>
-                    <td>{{ item.creationDate|date(dateFormat) }}</td>
-                    <td>{{ item.priority|default(0) }}</td>
-                    <td>
-                        {% if project.effortEstimationMethod == constant('BackendBundle\\Entity\\Project::METHOD_FIBONACCI')%}
-                            {{item.effortFibonacci}}
-                        {% else %}
-                            {{item.effortTShirt}}
-                        {% endif  %}
-                    </td>
-                    <td>
-                        <a class="btn btn-default btn-sm" title="{{ 'backend.project.edit'|trans }}" href="{{ path('backend_project_product_backlog_edit',{'id':project.id, 'itemId':item.id}) }}">
-                            <i class="fa fa-pencil"></i>
-                        </a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="6">{{'backend.backlog.empty_list'|trans}}</td>
-                </tr>
-            {% endfor %}
         </table>
         <div class="navigation pull-right">
             {{ knp_pagination_render(pagination) }}

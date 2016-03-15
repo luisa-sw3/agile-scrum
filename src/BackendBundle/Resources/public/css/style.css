@@ -206,3 +206,11 @@ span.label-notification {
     margin-right: 8px;
     font-weight: normal;
 }
+
+.binnacle {
+    border: 1px solid #e3e3e3;
+}
+
+.binnacle div.list-group-item {
+    border: 1px solid #e3e3e3 !important;
+}
