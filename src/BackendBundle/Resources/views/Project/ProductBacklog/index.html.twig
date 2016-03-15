@@ -138,31 +138,51 @@
     </div>#}
 {% endblock %}
 
+{% block other_scripts %}
+    <script src="{{ asset('bundles/backend/js/backlog-events.js') }}"></script>
+{% endblock %}
+
 {% block scripts %}
     $("#backendbundle_search_item_type_item_type").val("{{ pagination.params.item_type|default('')}}");
     $("#backendbundle_search_item_type_item_designed_user").val("{{ pagination.params.item_designed_user|default('')}}");
     
-    $(".create-related-item").fancybox({
-        width: '840px',
-        height: '500px',
-        autoSize: true,
-        autoScale: false,
-        autoDimensions: false,
-    });
-        
-    $(".copy-move-to-sprint").fancybox({
-        width: '500px',
-        height: '350px',
-        autoSize: true,
-        autoScale: false,
-        autoDimensions: false,
-    });
-        
-    $(".copy-move-to-project").fancybox({
-        width: '500px',
-        height: '350px',
-        autoSize: true,
-        autoScale: false,
-        autoDimensions: false,
-    });
+{% endblock %}
+
+{% block functions_javascript %}
+    
+    var unknownErrorMessage = "{{'backend.global.unknown_error'|trans}}";
+    
+    var changePriorityTitle = "{{'backend.item.change_priority'|trans}}";
+    var changePriorityLabel = "{{'backend.global.save_changes'|trans}}";
+    var changePriorityCancel = "{{'backend.global.cancel'|trans}}";
+
+    var modifyPriorityPath = "{{path('backend_project_product_backlog_change_priority',{'id':project.id})}}";
+
+    var deleteItemPath = "{{path('backend_project_product_backlog_delete',{'id':project.id})}}";
+
+    var deleteItemMessage = "{{'backend.item.removal_method_message'|trans}}<br><strong>1. {{'backend.item.cascade_delete'|trans}}: </strong>{{'backend.item.cascade_delete_message'|trans}}<br><strong>2. {{'backend.item.simple_delete'|trans}}: </strong>{{'backend.item.simple_delete_message'|trans}}";
+    var deleteItemTitle = "{{'backend.item.delete'|trans}}";
+    var cascadeDeleteLabel = "{{'backend.item.cascade_delete'|trans}}";
+    var cascadeDeleteConstant = "{{constant('BackendBundle\\Entity\\Item::DELETE_CASCADE')}}";
+
+    var simpleDeleteLabel = "{{'backend.item.simple_delete'|trans}}";
+    var simpleDeleteConstant = "{{constant('BackendBundle\\Entity\\Item::DELETE_SIMPLE')}}";
+    var cancelLabel = "{{'backend.global.cancel'|trans}}";
+    
+    var editEstimationHtmlPath = "{{path('backend_project_product_backlog_html_edit_estimation',{'id':project.id})}}";
+    var editEstimationTitle = "{{'backend.item.edit_estimation'|trans}}";
+    var editEstimationLabel = "{{'backend.global.save_changes'|trans}}";
+    var editEstimationPath = "{{path('backend_project_product_backlog_edit_estimation',{'id':project.id})}}";
+    
+    var changeStatusHtmlPath = "{{path('backend_project_product_backlog_html_change_status',{'id':project.id})}}";
+    var changeStatusTitle = "{{'backend.item.change_status'|trans}}";
+    var saveChangesLabel = "{{'backend.global.save_changes'|trans}}";
+    var changeStatusPath = "{{path('backend_project_product_backlog_change_status',{'id':project.id})}}";
+    
+    var modifyParentPath = "{{path('backend_project_product_backlog_change_parent',{'id':project.id})}}";
+    
+    var editWorkedTimeHtmlPath = "{{path('backend_project_product_backlog_html_edit_worked_time',{'id':project.id})}}";
+    var workedTimeTitle = "{{'backend.item.edit_worked_time'|trans}}";
+    var editWorkedTimePath = "{{path('backend_project_product_backlog_edit_worked_time',{'id':project.id})}}";
+    
 {% endblock %}

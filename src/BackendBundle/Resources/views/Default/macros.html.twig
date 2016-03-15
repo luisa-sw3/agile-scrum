@@ -133,9 +133,7 @@
                         <li><a href="javascript:void(0);" class="change-priority" item-id="{{item.id}}" priority="{{item.priority|default(0)}}"><i class="fa fa-reorder"></i> {{'backend.item.change_priority'|trans}}</a></li>
                         {% if item.type != constant('BackendBundle\\Entity\\Item::TYPE_USER_HISTORY') %}
                             <li><a href="javascript:void(0);" class="edit-estimation" item-id="{{item.id}}" estimation="{{item.estimatedHours|default(0)}}"><i class="fa fa-clock-o"></i> {{'backend.item.edit_estimation'|trans}}</a></li>
-                            {% if in_sprint_backlog %}
-                                <li><a href="javascript:void(0);" class="edit-worked-time" item-id="{{item.id}}" worked-time="{{item.workedHours|default(0)}}"><i class="fa fa-clock-o"></i> {{'backend.item.edit_worked_time'|trans}}</a></li>
-                            {% endif %}
+                            <li><a href="javascript:void(0);" class="edit-worked-time" item-id="{{item.id}}" worked-time="{{item.workedHours|default(0)}}"><i class="fa fa-clock-o"></i> {{'backend.item.edit_worked_time'|trans}}</a></li>
                         {% endif %}
                         <li class="divider"></li>
                         <li><a href="{{path('backend_project_product_backlog_copy_move_to_sprint',{'id':project.id,'itemId':item.id})}}" class="copy-move-to-sprint fancybox.iframe"><i class="fa fa-cut"></i> <i class="fa fa-copy"></i> {{'backend.item.move_copy_other_sprint'|trans}}</a></li>
