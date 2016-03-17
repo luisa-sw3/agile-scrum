@@ -24,15 +24,44 @@
                 </div>
             </div>
             <div class="col-md-12 col-xs-12">
-                <div class="form-group col-xs-6 no-padding-left">
+                <div class="form-group col-lg-6 col-md-6 col-xs-6 no-padding-left">
                     {{ form_label(form.type)}}<em>*</em>
                     {{ form_widget(form.type, {'attr':{'class':'form-control'}}) }}
                     {{ form_errors(form.type) }}
                 </div>
-                <div class="form-group col-xs-6 no-padding-right">
+                <div class="form-group col-lg-6 col-md-6 col-xs-6 no-padding-right">
                     {{ form_label(form.estimatedHours)}}
                     {{ form_widget(form.estimatedHours, {'attr':{'class':'form-control only_numbers_decimal'}}) }}
                     {{ form_errors(form.estimatedHours) }}
+                </div>
+                <div class="form-group col-lg-6 col-md-6 col-xs-6 no-padding-left">
+                    <div class="col-xs-10 no-padding-left">
+                        {{ form_label(form.priority)}}
+                        {{ form_widget(form.priority, {'attr':{'style':'cursor:pointer;','onchange':'rangevalue.value=value','onmousemove':'rangevalue.value=value','onkeyup':'rangevalue.value=value'},}) }}
+                        <div class="col-lg-12 col-md-12 col-xs-12 no-padding-sides" style="margin-bottom: 18px;">
+                            <span class="pull-left green-color">{{'backend.global.low'|trans}}</span>
+                            <span class="pull-right red-color">{{'backend.global.high'|trans}}</span>
+                        </div>
+                    </div>
+                    <output class="alert alert-box col-xs-2 text-center pull-right no-margin-bottom" id="rangevalue">{{item.priority|default(50)}}</output>
+                </div>
+                {% set displayFibonacci = true %}
+                {% if project.effortEstimationMethod != constant('BackendBundle\\Entity\\Project::METHOD_FIBONACCI')%}
+                    {% set displayFibonacci = false %}
+                {% endif  %}
+                <div class="form-group col-lg-6 col-md-6 col-xs-6 no-padding-right" {% if not displayFibonacci %}style="display: none;"{% endif %}>
+                    {{ form_label(form.effortFibonacci)}}
+                    {{ form_widget(form.effortFibonacci, {'attr':{'class':'form-control only_numbers_decimal'}}) }}
+                    {{ form_errors(form.effortFibonacci) }}
+                </div>
+                {% set displayTShirt = true %}
+                {% if project.effortEstimationMethod != constant('BackendBundle\\Entity\\Project::METHOD_TSHIRT_SIZE')%}
+                    {% set displayTShirt = false %}
+                {% endif %}
+                <div class="form-group col-lg-6 col-md-6 col-xs-6 no-padding-right" {% if not displayTShirt %}style="display: none;"{% endif %}>
+                    {{ form_label(form.effortTShirt)}}
+                    {{ form_widget(form.effortTShirt, {'attr':{'class':'form-control only_numbers_decimal'}}) }}
+                    {{ form_errors(form.effortTShirt) }}
                 </div>
             </div>
             <div class="col-md-12 col-xs-12">

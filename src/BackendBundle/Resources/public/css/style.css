@@ -63,6 +63,10 @@ and open the template in the editor.
     padding-left: 0px !important;
 }
 
+.small-padding-left {
+    padding-left: 8px !important;
+}
+
 .no-padding-right {
     padding-right: 0px !important;
 }
@@ -213,4 +217,32 @@ span.label-notification {
 
 .binnacle div.list-group-item {
     border: 1px solid #e3e3e3 !important;
+}
+
+.border-status-1 {
+    border-left: 9px #fff solid; //new
+}
+
+.border-status-2 {
+    border-left: 9px #5bc0de solid; //research
+}
+
+.border-status-3 {
+    border-left: 9px #777 solid; //confirmed, work start, near complete
+}
+
+.border-status-4 {
+    border-left: 9px #5cb85c solid; //no a bug, done, fixed
+}
+
+.border-status-5 {
+    border-left: 9px #337ab7 solid; //ready for testing, testing, 
+}
+
+.border-status-6 {
+    border-left: 9px #d9534f solid; //canceled
+}
+
+.border-status-7 {
+    border-left: 9px #f0ad4e solid; //postponed
 }

@@ -25,9 +25,10 @@ class ItemSimpleType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
         $typeOptions = $this->container->get('form_helper')->getItemTypeOptions();
-
         $statusOptions = $this->container->get('form_helper')->getItemStatusOptions();
-
+        $fibonacciOptions = $this->container->get('form_helper')->getItemFibonacciOptions();
+        $tShirtOptions = $this->container->get('form_helper')->getItemTShirtOptions();
+        
         $builder
                 ->add('title', Type\TextType::class, array(
                     'required' => true,
@@ -44,6 +45,26 @@ class ItemSimpleType extends AbstractType {
                     'required' => true,
                     'label' => $this->translator->trans('backend.item.type'),
                     'choices' => $typeOptions,
+                ))
+                ->add('priority', Type\RangeType::class, array(
+                    'required' => true,
+                    'label' => $this->translator->trans('backend.item.priority'),
+                    'attr' => array(
+                        'min' => 0,
+                        'max' => 100,
+                    )
+                ))
+                ->add('effortFibonacci', Type\ChoiceType::class, array(
+                    'required' => false,
+                    'placeholder' => $this->translator->trans('backend.global.select'),
+                    'label' => $this->translator->trans('backend.item.complexity'),
+                    'choices' => $fibonacciOptions,
+                ))
+                ->add('effortTShirt', Type\ChoiceType::class, array(
+                    'required' => false,
+                    'placeholder' => $this->translator->trans('backend.global.select'),
+                    'label' => $this->translator->trans('backend.item.complexity'),
+                    'choices' => $tShirtOptions,
                 ))
                 ->add('estimatedHours', Type\NumberType::class, array(
                     'required' => false,
