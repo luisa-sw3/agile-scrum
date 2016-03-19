@@ -67,6 +67,10 @@ and open the template in the editor.
     padding-left: 8px !important;
 }
 
+.small-margin-right {
+    margin-right: 8px !important;
+}
+
 .no-padding-right {
     padding-right: 0px !important;
 }
@@ -245,4 +249,8 @@ span.label-notification {
 
 .border-status-7 {
     border-left: 9px #f0ad4e solid; //postponed
+}
+
+.inline {
+    display: inline;
 }

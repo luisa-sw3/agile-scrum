@@ -115,13 +115,13 @@
                 /* Codigo para eventos de fancybox */
                 $(".fancybox").fancybox();
 
-                /* Codigo para eventos de popovers */
+                {#/* Codigo para eventos de popovers */
                 $('.popover-menu').each(function(){
                     var object = $(this);
                     var title = object.attr('title');
                     var content = object.attr('content');
                     object.popover({title: title, content: content, html: true, placement: "auto", trigger: "hover"});
-                });
+                });#}
 
                 /* Validacion para saber si estamos en un dispositivo mobile o no */
                 if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {

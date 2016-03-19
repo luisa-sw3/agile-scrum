@@ -28,6 +28,8 @@ backend:
         unknown_error: "Unknown error, try again"
         logout: "Logout"
         save_changes: "Save Changes"
+        save_and_continue: "Save & Continue"
+        save_and_exit: "Save & Exit"
         language: "Language"
         id: "ID"
         consecutive: "Consecutive"

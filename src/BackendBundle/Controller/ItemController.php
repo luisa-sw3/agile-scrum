@@ -247,7 +247,7 @@ class ItemController extends Controller {
                             $em->flush();
 
                             //guardamos el registro en el historial
-                            $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_ATTACHMENT_ADDED, null, $attachment->getName());
+                            $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_ATTACHMENT_ADDED, null, ': <strong>'.$attachment->getName().'</strong>');
 
                             $html = $this->renderView('BackendBundle:Project/ProductBacklog:attachmentDetails.html.twig', array(
                                 'attach' => $attachment,
@@ -311,7 +311,7 @@ class ItemController extends Controller {
             $em->flush();
 
             //guardamos el registro en el historial
-            $this->container->get('app_history')->saveItemHistory($attachment->getItem(), Entity\ItemHistory::ITEM_ATTACHMENT_DELETED, null, $attachment->getName());
+            $this->container->get('app_history')->saveItemHistory($attachment->getItem(), Entity\ItemHistory::ITEM_ATTACHMENT_DELETED, null, ': <strong>'.$attachment->getName().'</strong>');
         } catch (\Exception $ex) {
             $response['result'] = '__KO__';
             $response['msg'] = $this->get('translator')->trans('backend.global.unknown_error');
@@ -364,8 +364,14 @@ class ItemController extends Controller {
             //guardamos el registro en el historial
             $this->container->get('app_history')->saveItemHistory($relatedItem, Entity\ItemHistory::ITEM_CREATED);
 
-            $this->get('session')->getFlashBag()->add('messageSuccess', $this->get('translator')->trans('backend.item.creation_success_message'));
-            $closeFancy = true;
+
+            if ($form->get('saveAndContinue')->isClicked()) {
+                $params = array('id' => $id, 'itemId' => $itemId);
+                return $this->redirectToRoute('backend_project_product_backlog_new_related_item', $params);
+            } elseif ($form->get('saveAndExit')->isClicked()) {
+                $this->get('session')->getFlashBag()->add('messageSuccess', $this->get('translator')->trans('backend.item.creation_success_message'));
+                $closeFancy = true;
+            }
         }
 
         return $this->render('BackendBundle:Project/ProductBacklog:newRelatedItem.html.twig', array(
@@ -923,7 +929,7 @@ class ItemController extends Controller {
                     $newProject = $userProject->getProject();
                 }
 
-                
+
                 if ($action == MoveItemToProjectType::MOVE_TO_PROJECT && $newProject) {
 
                     $this->changeProjectToItem($item, $previousProject, $newProject, null);

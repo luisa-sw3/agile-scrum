@@ -28,6 +28,8 @@ backend:
         unknown_error: "Error desconocido, inténtelo de nuevo"
         logout: "Salir"
         save_changes: "Guardar Cambios"
+        save_and_continue: "Guardar y Continuar"
+        save_and_exit: "Guardar y Salir"
         language: "Lenguaje"
         id: "ID"
         consecutive: "Consecutivo"

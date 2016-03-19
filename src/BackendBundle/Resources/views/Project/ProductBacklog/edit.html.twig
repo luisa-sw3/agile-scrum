@@ -112,7 +112,7 @@
                 <legend>{{'backend.item_history.history'|trans}}</legend>
                 <div class="form-group no-margin-bottom">
                     <table class="table table-bordered no-margin-bottom">
-                        <tr id="table-header">
+                        <tr id="table-history">
                             <th width="130px;">{{'backend.global.date'|trans}}</th>
                             <th>{{'backend.item_history.event'|trans}}</th>
                         </tr>
@@ -128,7 +128,7 @@
                                     <i class="fa fa-user"></i> {{event.userOwner}}
                                 </td>
                                 <td>
-                                    {{ event.getTextAction|trans ~event.actionSufix }}
+                                    {{ (event.getTextAction|trans ~event.actionSufix)|raw }}
                                     {% if event.additionalData is not empty %}
                                         {% set data = event.additionalData|json_decode %}
                                         <table class="table table-striped">
@@ -170,7 +170,7 @@
                 </div>
                 <div class="table-responsive form-group col-lg-12 col-md-12 col-xs-12 no-padding-sides">
                     <table class="table table-bordered table-attachments">
-                        <tr id="table-header">
+                        <tr id="table-attachments">
                             <th>{{'backend.attachment.file_name'|trans}}</th>
                             <th>{{'backend.attachment.file_information'|trans}}</th>
                             <th width="86px">{{'backend.global.options'|trans}}</th>
@@ -178,21 +178,41 @@
                         {% for attach in attachments %}
                             <tr>
                                 <td>
+                                    {% set fileExists = false %}
+                                    {% if (attach.filePath is not empty and file_exists(item_attachments_folder ~attach.filePath)) %}
+                                        {% set fileExists = true %}
+                                    {% endif %}
+                                    
                                     {% if attach.isAudioFile %}
-                                        <audio controls>
-                                            <source src="{{ asset('uploads/items/'~attach.filePath)}}" type="audio/{{attach.fileExtension}}">
-                                            {{'backend.attachment.no_support_audio'|trans}}
-                                        </audio>
+                                        {% if fileExists %}
+                                            <audio controls>
+                                                <source src="{{ asset('uploads/items/'~attach.filePath)}}" type="audio/{{attach.fileExtension}}">
+                                                {{'backend.attachment.no_support_audio'|trans}}
+                                            </audio>
+                                        {% else %}
+                                            <img class="thumbnail inline" src="{{ asset('bundles/backend/images/file-broken.png')}}"/>
+                                            <span class="red-color">{{'backend.attachment.not_found'|trans}}</span>
+                                        {% endif %}
                                     {% elseif attach.isVideoFile %}
-                                        <video controls>
-                                            <source src="{{ asset('uploads/items/'~attach.filePath)}}" type="video/{{attach.fileExtension}}">
-                                            {{'backend.attachment.no_support_video'|trans}}
-                                            <!-- You can embed a Flash player here, to play your mp4 video in older browsers -->
-                                        </video>
+                                        {% if fileExists %}
+                                            <video controls>
+                                                <source src="{{ asset('uploads/items/'~attach.filePath)}}" type="video/{{attach.fileExtension}}">
+                                                {{'backend.attachment.no_support_video'|trans}}
+                                                <!-- You can embed a Flash player here, to play your mp4 video in older browsers -->
+                                            </video>
+                                        {% else %}
+                                            <img class="thumbnail inline" src="{{ asset('bundles/backend/images/file-broken.png')}}"/>
+                                            <span class="red-color">{{'backend.attachment.not_found'|trans}}</span>
+                                        {% endif %}
                                     {% elseif attach.isImageFile %}
-                                        <a class="fancybox" href="{{asset('uploads/items/'~attach.filePath)}}">
-                                            <img class="thumbnail" src="{{ asset('uploads/items/'~attach.filePath) | imagine_filter('thumbnail_120_90')}}"/>
-                                        </a>
+                                        {% if fileExists %}
+                                            <a class="fancybox" href="{{asset('uploads/items/'~attach.filePath)}}">
+                                                <img class="thumbnail" src="{{ asset('uploads/items/'~attach.filePath) | imagine_filter('thumbnail_120_90')}}"/>
+                                            </a>
+                                        {% else %}
+                                            <img class="thumbnail inline" src="{{ asset('bundles/backend/images/file-broken.png')}}"/>
+                                            <span class="red-color">{{'backend.attachment.not_found'|trans}}</span>
+                                        {% endif %}
                                     {% else %}
                                         <i class="fa fa-file fa-5x" title="{{'backend.attachment.preview_no_available'|trans}}"></i>
                                     {% endif %}
@@ -209,7 +229,7 @@
                                 </td>
                             </tr>
                         {% else %}
-                            <tr>
+                            <tr id="no-attachments">
                                 <td colspan="3">
                                     {{'backend.attachment.empty_list'|trans}}
                                 </td>
@@ -312,7 +332,8 @@
                     $("#progress-bar").toggle();
                     if (response.result == "__OK__") {
                         $("#upload-message").attr('class', 'success');
-                        $("#table-header").after(response.html);
+                        $("#table-attachments").after(response.html);
+                        $("#no-attachments").remove();
                         $("#uploadfiles").val('');
                     } else {
                         $("#upload-message").attr('class', 'danger');

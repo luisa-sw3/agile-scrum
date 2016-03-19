@@ -29,8 +29,8 @@
                     <div class="input-group-btn">
                         <div class="btn-group" role="group">
                             <div class="dropdown dropdown-lg">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                <button type="button" class="btn btn-default dropdown-toggle show-dropdown-search" data-toggle="dropdownss" aria-expanded="false"><span class="caret"></span></button>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-search" role="menu">
                                     <div class="form-group">
                                         {{ form_label(searchForm.item_type)}}
                                         {{ form_widget(searchForm.item_type, {'attr':{'class':'form-control'}})}}
@@ -59,7 +59,7 @@
 
     <div class="col-lg-12 no-padding-sides">
         <div class="rstable">
-            <ol parent="{{constant('BackendBundle\\Entity\\Item::EMPTY_PARENT')}}" class="default vertical">
+            <ol parent="{{constant('BackendBundle\\Entity\\Item::EMPTY_PARENT')}}" class="default vertical col-lg-12 col-md-12 col-xs-12">
                 {% for item in pagination %}
                     <li item-id='{{item.id}}' parent="{{constant('BackendBundle\\Entity\\Item::EMPTY_PARENT')}}" priority="{{item.priority|default(0)}}" class="backlog-item">
                         {{ filters.itemDescription(item, project, true, true) }}
@@ -123,7 +123,11 @@
             </ol>
         </div>
     </div>
-
+    {% if pagination|length > 0 %}
+        <div class="col-lg-12">
+            <a href="{{path('backend_project_product_backlog_new',{'id':project.id})}}" class="btn btn-primary pull-right">{{'backend.item.new'|trans}}</a>
+        </div>
+    {% endif %}
 
     {#<div class="table-responsive">
         <table class="table table-bordered table-hover no-margin-bottom">
@@ -171,6 +175,11 @@
     $("#backendbundle_search_item_type_item_type").val("{{ pagination.params.item_type|default('')}}");
     $("#backendbundle_search_item_type_item_designed_user").val("{{ pagination.params.item_designed_user|default('')}}");
 
+    {# Codig para mostrar y ocultar el buscador #}
+    $(".show-dropdown-search").click(function() {
+        $(".dropdown-search").toggle();
+    });
+    
 {% endblock %}
 
 {% block functions_javascript %}

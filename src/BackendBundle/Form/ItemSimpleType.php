@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type as Type;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ItemSimpleType extends AbstractType {
 
@@ -28,7 +29,7 @@ class ItemSimpleType extends AbstractType {
         $statusOptions = $this->container->get('form_helper')->getItemStatusOptions();
         $fibonacciOptions = $this->container->get('form_helper')->getItemFibonacciOptions();
         $tShirtOptions = $this->container->get('form_helper')->getItemTShirtOptions();
-        
+
         $builder
                 ->add('title', Type\TextType::class, array(
                     'required' => true,
@@ -72,6 +73,12 @@ class ItemSimpleType extends AbstractType {
                     'attr' => array(
                         'maxlength' => 4
                     )
+                ))
+                ->add('saveAndContinue', SubmitType::class, array(
+                    'label' => $this->translator->trans('backend.global.save_and_continue'),
+                ))
+                ->add('saveAndExit', SubmitType::class, array(
+                    'label' => $this->translator->trans('backend.global.save_and_exit')
                 ))
         ;
     }
