@@ -139,6 +139,9 @@
                         <li class="divider"></li>
                         <li><a href="{{path('backend_project_product_backlog_copy_move_to_sprint',{'id':project.id,'itemId':item.id})}}" class="copy-move-to-sprint fancybox.iframe"><i class="fa fa-cut"></i> <i class="fa fa-copy"></i> {{'backend.item.move_copy_other_sprint'|trans}}</a></li>
                         <li><a href="{{path('backend_project_product_backlog_copy_move_to_project',{'id':project.id,'itemId':item.id})}}" class="copy-move-to-project fancybox.iframe"><i class="fa fa-cut"></i> <i class="fa fa-copy"></i> {{'backend.item.move_copy_other_project'|trans}}</a></li>
+                        {% if item.sprint is not empty or (item.sprint is empty and item.parent is not empty and item.parent.sprint is not empty) %}
+                            <li><a href="javascript:void(0);" class="move-to-product-backlog" item-id="{{item.id}}"><i class="fa fa-cut"></i> {{'backend.item.move_to_product_backlog'|trans}}</a></li>
+                        {% endif %}
                         <li class="divider"></li>
                         <li><a href="javascript:void(0);" class="delete-item" item-id="{{item.id}}"><i class="fa fa-times"></i> {{'backend.global.delete'|trans}}</a></li>
                     </ul>

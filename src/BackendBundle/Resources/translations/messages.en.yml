@@ -256,6 +256,9 @@ backend:
         move_copy_other_project: "Move / Copy to Project"
         select_project: "Select Project"
         
+        move_to_product_backlog: "Move to Product Backlog"
+        move_to_product_backlog_message: "Are you sure you want to move this item to Product Backlog?"
+        
     backlog:
         product_backlog: "Product Backlog"
         empty_list: "No items in product backlog"
@@ -354,4 +357,5 @@ backend:
         item_sprint_copied: "The item has been copied to sprint"
         item_project_copied: "The item has been copied to project"
         item_project_moved: "The item has been moved to project"
+        item_moved_to_product_backlog: "The item has been moved to Product Backlog"
         

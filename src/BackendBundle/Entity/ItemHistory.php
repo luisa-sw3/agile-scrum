@@ -38,6 +38,7 @@ class ItemHistory {
     const ITEM_SPRINT_COPIED = 18; //the item has been copied to sprint
     const ITEM_PROJECT_MOVED = 19; //the item has been moved to project
     const ITEM_PROJECT_COPIED = 20; //the item has been copied to project
+    const ITEM_MOVED_TO_PRODUCT_BACKLOG = 21; //the item has been moved to Product Backlog
     
     /**
      * @ORM\Id
@@ -225,6 +226,9 @@ class ItemHistory {
                 break;
             case self::ITEM_PROJECT_COPIED:
                 $langVar = 'backend.item_history.item_project_copied';
+                break;
+            case self::ITEM_MOVED_TO_PRODUCT_BACKLOG:
+                $langVar = 'backend.item_history.item_moved_to_product_backlog';
                 break;
             default:
                 break;

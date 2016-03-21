@@ -1019,5 +1019,49 @@ class ItemController extends Controller {
         $this->container->get('app_history')->saveItemHistory($newItem, Entity\ItemHistory::ITEM_PROJECT_COPIED, $changes, " : " . $newProject);
         return $newItem;
     }
+    
+    
+    /**
+     * Permite mover un item al Product Backlog
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 21/03/2016
+     * @param Request $request datos de la solicitud
+     * @param string $id identificador del proyecto
+     * @return JsonResponse JSON con mensaje de respuesta
+     */
+    public function moveToProductBacklogAction(Request $request, $id) {
+        $response = array('result' => '__OK__', 'msg' => $this->get('translator')->trans('backend.item.update_success_message'));
+        $em = $this->getDoctrine()->getManager();
+        $itemId = $request->request->get('itemId');
+        $item = $em->getRepository('BackendBundle:Item')->find($itemId);
+        $previousSprint = $item->getSprint()."";
+        
+        if (!$item || ($item && $item->getProject()->getId() != $id)) {
+            $response['result'] = '__KO__';
+            $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
+            return new JsonResponse($response);
+        }
+
+        if (!$this->container->get('access_control')->isAllowedProject($id)) {
+            $response['result'] = '__KO__';
+            $response['msg'] = $this->get('translator')->trans('backend.project.not_found_message');
+            return new JsonResponse($response);
+        }
+
+        try {
+            $item->setSprint(null);
+            $item->setParent(null);
+            $em->persist($item);
+            $em->flush();
+
+            //guardamos el registro en el historial
+            $changes = array('before' => $previousSprint, 'after' => '~');
+            $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_MOVED_TO_PRODUCT_BACKLOG, $changes);
+        } catch (\Exception $ex) {
+            $response['result'] = '__KO__';
+            $response['msg'] = $this->get('translator')->trans('backend.global.unknown_error');
+        }
+
+        return new JsonResponse($response);
+    }
 
 }

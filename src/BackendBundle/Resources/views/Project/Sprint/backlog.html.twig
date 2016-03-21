@@ -314,7 +314,50 @@
                             {
                                 bootbox.alert("{{'backend.global.unknown_error'|trans}}")
                             }
-                        })
+                        });
+                    }
+                }
+            });
+        });
+        
+        
+        $(".move-to-product-backlog").click(function() {
+            var object = $(this);
+            var itemId = object.attr('item-id');
+            
+            bootbox.confirm({
+                message: "{{'backend.item.move_to_product_backlog_message'|trans}}",
+                buttons: {
+                    'cancel': {
+                        label: '{{'backend.global.cancel' | trans}}',
+                        className: 'btn-default'
+                    },
+                    'confirm': {
+                        label: "{{'backend.item.move_to_product_backlog'|trans}}",
+                        className: 'btn-success'
+                    }
+                },
+                callback: function (result) {
+                    if (result == true)
+                    {
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('backend_project_product_backlog_move_to_product_backlog',{'id':project.id}) }}",
+                            dataType: 'json',
+                            data: {itemId: itemId},
+                            success: function (r)
+                            {
+                                if (r.result == '__OK__') {
+                                    window.location.reload();
+                                } else {
+                                    bootbox.alert(r.msg);
+                                }
+                            },
+                            error: function (r)
+                            {
+                                bootbox.alert("{{'backend.global.unknown_error'|trans}}")
+                            }
+                        });
                     }
                 }
             });

@@ -82,3 +82,8 @@ backend_project_product_backlog_copy_move_to_project:
     path:     /{itemId}/copyMoveToProject
     defaults: { _controller: "BackendBundle:Item:copyMoveToProject" }
     methods:  [GET, POST]
+    
+backend_project_product_backlog_move_to_product_backlog:
+    path:     /moveToProductBacklog
+    defaults: { _controller: "BackendBundle:Item:moveToProductBacklog" }
+    methods:  [POST]

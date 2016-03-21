@@ -256,6 +256,9 @@ backend:
         move_copy_other_project: "Mover / Copiar a Proyecto"
         select_project: "Seleccione Proyecto"
         
+        move_to_product_backlog: "Mover a la Pila del Producto"
+        move_to_product_backlog_message: "Estas seguro que deseas mover este item a la Pila del Producto?"
+        
     backlog:
         product_backlog: "Pila del Producto"
         empty_list: "Ningun elemento en la Pila del Producto"
@@ -353,3 +356,4 @@ backend:
         item_sprint_copied: "El elemento se ha copiado al sprint"
         item_project_copied: "El elemento se ha copiado al proyecto"
         item_project_moved: "El elemento se ha movido al proyecto"
+        item_moved_to_product_backlog: "El elemento se ha movido a la Pila del Producto"
