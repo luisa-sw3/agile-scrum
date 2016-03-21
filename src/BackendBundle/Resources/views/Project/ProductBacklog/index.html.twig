@@ -22,8 +22,8 @@
     {{ filters.showMessage('messageError', 'danger')}}
 
     <div class="row">
-        <div class="col-md-6">
-            <div class="input-group" id="adv-search">
+        <div class="col-md-6 col-xs-12">
+            <div class="input-group col-lg-12 col-md-12 col-xs-12" id="adv-search">
                 <form class="form-horizontal" role="form" method="post">
                     {{ form_widget(searchForm.item_free_text, {'attr':{'class':'form-control main-search', 'value':pagination.params.item_free_text|default('')}})}}
                     <div class="input-group-btn">

@@ -254,3 +254,18 @@ span.label-notification {
 .inline {
     display: inline;
 }
+
+@media screen and (max-width: 768px) {
+    h1.page-header {
+        font-size: 30px;
+    }
+}
+
+@media screen and (max-width: 473px) {
+    h1.page-header {
+        font-size: 24px;
+    }
+    ol.breadcrumb li {
+        font-size: 12px !important;
+    }
+}
