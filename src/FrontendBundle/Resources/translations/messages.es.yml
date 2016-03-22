@@ -1,4 +1,8 @@
 frontend:
+    lang:
+        spanish: "Español"
+        english: "Inglés"
+        
     pages:
         home: "Inicio"
         features: "Características"
