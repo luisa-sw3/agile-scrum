@@ -9,10 +9,6 @@ services:
         arguments: 
             entityManager: "@doctrine.orm.entity_manager"
             tokenStorage: "@security.token_storage"
-    
-#    email_manager:
-#        class: BackendBundle\Services\EmailManager
-#        arguments: [@request_stack, @service_container, @doctrine.orm.entity_manager]
 
     email_manager:
         class: BackendBundle\Services\EmailManager

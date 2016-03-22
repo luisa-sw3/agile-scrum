@@ -40,14 +40,6 @@ class UserType extends AbstractType {
                         'maxlength' => 30,
                     )
                 ))
-                ->add('cellphone', Type\NumberType::class, array(
-                    'required' => false,
-                    'label' => $this->translator->trans('backend.user.cellphone'),
-                    'attr' => array(
-                        'placeholder' => $this->translator->trans('backend.user.cellphone'),
-                        'maxlength' => 15,
-                    )
-                ))
                 ->add('email', Type\RepeatedType::class, array(
                     'first_options' => array(
                         'label' => $this->translator->trans('backend.user.email'),
@@ -84,7 +76,7 @@ class UserType extends AbstractType {
                     'options' => array('label' => 'Password.'),
                 ))
                 ->add('submit', Type\SubmitType::class, array(
-                    'label' => $this->translator->trans('backend.global.create'),
+                    'label' => $this->translator->trans('frontend.create_account.create'),
                 ))
         ;
     }

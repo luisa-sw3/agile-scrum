@@ -13,6 +13,18 @@ class DefaultController extends Controller {
         return $this->render('FrontendBundle:Default:index.html.twig');
     }
 
+    /**
+     * Esta funcion permite redireccionar a la aplicacion cuando no introducen 
+     * la variable _locale en la url para identificar el idioma
+     * @param Request $request
+     * @return type
+     */
+    public function redirectAction(Request $request) {
+        $locale = $this->container->getParameter('locale');
+        $url = $this->generateUrl('frontend_homepage', array('_locale' => $locale));
+        return $this->redirect($url);
+    }
+    
     public function featuresAction() {
         return $this->render('FrontendBundle:Default:features.html.twig');
     }
