@@ -54,8 +54,8 @@ class FormHelper {
             $this->translator->trans($item->getTextStatus(Entity\Item::STATUS_TESTING)) => Entity\Item::STATUS_TESTING,
             $this->translator->trans($item->getTextStatus(Entity\Item::STATUS_CANCELED)) => Entity\Item::STATUS_CANCELED,
             $this->translator->trans($item->getTextStatus(Entity\Item::STATUS_POSTPONED)) => Entity\Item::STATUS_POSTPONED,
-            $this->translator->trans($item->getTextStatus(Entity\Item::STATUS_DONE)) => Entity\Item::STATUS_DONE,
             $this->translator->trans($item->getTextStatus(Entity\Item::STATUS_FIXED)) => Entity\Item::STATUS_FIXED,
+            $this->translator->trans($item->getTextStatus(Entity\Item::STATUS_DONE)) => Entity\Item::STATUS_DONE,
         );
         return $statusOptions;
     }

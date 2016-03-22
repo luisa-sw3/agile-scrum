@@ -9,26 +9,26 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand main-title shadow" href="index.html">Agile Scrum</a>
+            <a class="navbar-brand main-title" href="{{ path('frontend_homepage') }}">Agile Scrum</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="{{ path('frontend_homepage') }}" class="shadow">Home</a>
+                    <a href="{{ path('frontend_homepage') }}">{{'frontend.pages.home'|trans}}</a>
                 </li>
                 <li>
-                    <a href="{{ path('frontend_features') }}" class="shadow">Features</a>
+                    <a href="{{ path('frontend_features') }}">{{'frontend.pages.features'|trans}}</a>
                 </li>
                 <li>
-                    <a href="{{ path('frontend_why_agile_scrum') }}" class="shadow">Why Agile Scrum?</a>
+                    <a href="{{ path('frontend_why_agile_scrum') }}">{{'frontend.pages.why'|trans}}</a>
                 </li>
                 <li>
-                    <a href="{{ path('frontend_create_account') }}" class="shadow">Create Account</a>
+                    <a href="{{ path('frontend_create_account') }}">{{'frontend.pages.create_account'|trans}}</a>
                 </li>
                 <li>
-                    <a href="{{ path('backend_login') }}" class="shadow">Sign In</a>
+                    <a href="{{ path('backend_login') }}">{{'frontend.pages.sign_in'|trans}}</a>
                 </li>
             </ul>
         </div>

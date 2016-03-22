@@ -22,6 +22,16 @@ class ItemRepository extends EntityRepository {
             $where .= ' AND i.project = :project ';
             $parameters['project'] = $search['project'];
         }
+        
+        if (isset($search['item_type'])) {
+            $where .= ' AND i.type = :item_type ';
+            $parameters['item_type'] = $search['item_type'];
+        }
+        
+        if (isset($search['item_designed_user'])) {
+            $where .= ' AND i.designedUser = :item_designed_user ';
+            $parameters['item_designed_user'] = $search['item_designed_user'];
+        }
 
         if (isset($search['sprint'])) {
             if ($search['sprint'] != null && $search['sprint'] != Sprint::ALL_SPRINTS) {
