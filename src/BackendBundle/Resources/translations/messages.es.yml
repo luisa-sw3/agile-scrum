@@ -358,3 +358,8 @@ backend:
         item_project_copied: "El elemento se ha copiado al proyecto"
         item_project_moved: "El elemento se ha movido al proyecto"
         item_moved_to_product_backlog: "El elemento se ha movido a la Pila del Producto"
+        
+    time_tracking:
+        time_tracking: "Registro de Tiempo"
+        time: "Tiempo"
+        empty_list: "Ningún registro de tiempo"

@@ -1,0 +1,107 @@
+{% extends 'BackendBundle:Default:main.html.twig' %}
+{% block title %}{{'backend.time_tracking.time_tracking'|trans}}{% endblock %}
+
+{% block content %}
+    
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                {{'backend.time_tracking.time_tracking'|trans}}
+                <a href="{{ app.request.headers.get('referer') }}" class="btn btn-default pull-right">{{'backend.global.back'|trans}}</a>
+            </h1>
+            {% set item1 = {'text': 'backend.time_tracking.time_tracking'|trans, 'icon':'fa fa-clock-o'} %}
+            {% set items = [item1] %}
+            {{ filters.breadcrum(items) }}
+        </div>
+    </div>
+    <!-- /.row -->
+    {{ filters.showMessage('messageSuccess', 'success')}}
+    {{ filters.showMessage('messageError', 'danger')}}
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>{{ 'backend.global.date'|trans }}</th>
+                    <th>{{ 'backend.item.description'|trans }}</th>
+                    <th>{{ 'backend.project.name'|trans }}</th>
+                    <th>{{ 'backend.time_tracking.time'|trans }}</th>
+                    <th>{{ 'backend.global.options'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% set dateFormat = app_settings.getDefaultDateFormat() %}
+            {% set hourFormat = app_settings.getDefaultHourFormat() %}
+            {% for time in time_tracking %}
+                <tr>
+                    <td>{{ time.date|date(dateFormat) }}</td>
+                    <td>{{ time }}</td>
+                    <td>{{ time.project.name }}</td>
+                    <td>
+                        {{ time.workedTime }}
+                        <br>
+                        {{ time.startTime|date(hourFormat) }} - {{ time.endTime|date(hourFormat) }}
+                    </td>
+                    <td>
+                        <a class="btn btn-danger btn-md delete-time" time-id="{{time.id}}" title="" href="javascript:void(0);">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">{{ 'backend.time_tracking.empty_list'|trans }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {# Codigo para rechazar invitaciones pendientes #}
+    $(".reject-invitation").click(function () {
+        var object = $(this);
+        var invitationId = object.attr('invitation-id');
+
+        bootbox.confirm({
+            message: "{{'backend.project_invitation.reject_warning'|trans}}",
+            buttons: {
+                'cancel': {
+                    label: '{{'backend.global.cancel' | trans}}',
+                    className: 'btn-default'
+                },
+                'confirm': {
+                    label: '{{'backend.project_invitation.reject' | trans}}',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+
+                if (result == true)
+                {
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('backend_notifications_reject')}}",
+                        dataType: 'json',
+                        data: {invitationId: invitationId},
+                        success: function (r)
+                        {
+                            if (r.result == '__OK__') {
+                                window.location.reload();
+                            } else {
+                                bootbox.alert(r.msg);
+                            }
+                        },
+                        error: function (r)
+                        {
+                            bootbox.alert("{{'backend.global.unknown_error'|trans}}")
+                        }
+                    });
+                }
+            }
+        });
+    });
+    
+{% endblock %}

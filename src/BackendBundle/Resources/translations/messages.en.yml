@@ -360,3 +360,7 @@ backend:
         item_project_moved: "The item has been moved to project"
         item_moved_to_product_backlog: "The item has been moved to Product Backlog"
         
+    time_tracking:
+        time_tracking: "Time Tracking"
+        time: "Time"
+        empty_list: "No time entries"
