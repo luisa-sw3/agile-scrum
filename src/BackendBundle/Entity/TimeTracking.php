@@ -171,4 +171,30 @@ class TimeTracking {
         }
     }
 
+    /**
+     * Permite obtener el tiempo transcurrido en formato natural
+     * @return string
+     */
+    public function getTimeOnNaturalLanguage() {
+        $startTime = $this->getStartTime();
+        $interval = $startTime->diff($this->getEndTime());
+
+        $hours = $interval->format("%H");
+        $minutes = $interval->format("%I");
+        $seconds = $interval->format("%S");
+        
+        $naturalTime = '';
+        if ((int)$hours > 0) {
+            $naturalTime .= (int)$hours.' h. ';
+            $naturalTime .= (int)$minutes.' min. ';
+            $naturalTime .= (int)$seconds.' s.';
+        } elseif ((int)$minutes > 0) {
+            $naturalTime .= (int)$minutes.' min. ';
+            $naturalTime .= (int)$seconds.' s.';
+        } elseif ((int)$seconds > 0) {
+            $naturalTime .= (int)$seconds.' s.';
+        } 
+        return $naturalTime;
+    }
+
 }

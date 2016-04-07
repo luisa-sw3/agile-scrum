@@ -1,0 +1,37 @@
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>{{ 'backend.global.date'|trans }}</th>
+            <th>{{ 'backend.item.description'|trans }}</th>
+            <th>{{ 'backend.project.name'|trans }}</th>
+            <th>{{ 'backend.time_tracking.time'|trans }}</th>
+            <th>{{ 'backend.global.options'|trans }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set dateFormat = app_settings.getDefaultDateFormat() %}
+        {% set hourFormat = app_settings.getDefaultHourFormat() %}
+        {% for time in time_tracking %}
+            <tr>
+                <td>{{ time.date|date(dateFormat) }}</td>
+                <td>{{ time }}</td>
+                <td>{{ time.project.name }}</td>
+                <td>
+                    {{ time.getTimeOnNaturalLanguage }}
+                    {#{{ time.workedTime }}#}
+                    <br>
+                    {{ time.startTime|date(hourFormat) }} / {{ time.endTime|date(hourFormat) }}
+                </td>
+                <td>
+                    <a class="btn btn-danger btn-md delete-time" time-id="{{time.id}}" title="" href="javascript:void(0);">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">{{ 'backend.time_tracking.empty_list'|trans }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

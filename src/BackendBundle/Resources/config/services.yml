@@ -16,6 +16,9 @@ services:
             requestStack:   "@request_stack"
             container:      "@service_container"
             entityManager:  "@doctrine.orm.entity_manager"
+            
+    time_tracker:
+        class: BackendBundle\Services\TimeTracker
     
     #servicio para clase de ayuda para implementar formularios
     form_helper:

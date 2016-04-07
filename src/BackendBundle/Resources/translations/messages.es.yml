@@ -371,3 +371,5 @@ backend:
         stop: "Detener"
         select_task: "Seleccione la tarea"
         time: "Tiempo"
+        select_task_warning: "Por favor seleccione o describa una tarea"
+        select_project_warning: "Por favor seleccione un proyecto"

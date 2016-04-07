@@ -24,17 +24,26 @@ class TimeTrackingController extends Controller {
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
 
-        $search = array('user' => $this->getUser()->getId());
-        $order = array('date' => 'DESC', 'startTime' => 'DESC');
-        $timeTracking = $em->getRepository('BackendBundle:TimeTracking')->findBy($search, $order);
+        $currentDate = Util::getCurrentDate();
+        $search = array('startDate' => $currentDate->modify('-5 days'), 'endDate' => Util::getCurrentDate());
 
-        //FIX_ME
-        //buscamos si hay alhuna tarea activa para el usuario logueado
-        $search['endTime'] = null;
-        $timeTrack = $em->getRepository('BackendBundle:TimeTracking')->findOneBy($search, $order);
+        $timeTracking = $em->getRepository('BackendBundle:TimeTracking')
+                ->findUserTimeTracking($this->getUser()->getId(), $search);
+
+        //buscamos si hay alguna tarea activa para el usuario logueado
+        $searchActive = array(
+            'user' => $this->getUser()->getId(),
+            'endTime' => null
+        );
+        $order = array('date' => 'DESC', 'startTime' => 'DESC');
+        $timeTrack = $em->getRepository('BackendBundle:TimeTracking')->findOneBy($searchActive, $order);
         if (!$timeTrack instanceof Entity\TimeTracking) {
             $timeTrack = new Entity\TimeTracking();
             $timeTrack->setUser($this->getUser());
+        } else {
+            $workedTime = $this->container->get('time_tracker')
+                    ->getSecondsBetweenDates($timeTrack->getStartTime(), Util::getCurrentDate());
+            $timeTrack->setWorkedTime($workedTime);
         }
         $form = $this->createForm(TimeTrackType::class, $timeTrack);
 
@@ -117,27 +126,95 @@ class TimeTrackingController extends Controller {
 
             $parameters = $request->request->get('backendbundle_time_track_type');
 
-            if (isset($parameters['taskId'])) {
+            $item = null;
+            if (isset($parameters['taskId']) && !empty($parameters['taskId'])) {
                 $item = $em->getRepository('BackendBundle:Item')->find($parameters['taskId']);
+            }
 
-                if ($item instanceof Entity\Item &&
-                        $this->container->get('access_control')->isAllowedProject($item->getProject()->getId())) {
-                    $timeTrack->setItem($item);
-                    $timeTrack->setProject($item->getProject());
+            if ($item instanceof Entity\Item &&
+                    $this->container->get('access_control')->isAllowedProject($item->getProject()->getId())) {
+                $timeTrack->setItem($item);
+                $timeTrack->setProject($item->getProject());
 
-                    $em->persist($timeTrack);
-                    $em->flush();
+                $em->persist($timeTrack);
+                $em->flush();
 
-                    $response['result'] = '__OK__';
-                } else {
-                    $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
-                }
+                $response['result'] = '__OK__';
+                $response['timeId'] = $timeTrack->getId();
+            } elseif (!empty($timeTrack->getDescription())) {
+                $em->persist($timeTrack);
+                $em->flush();
+
+                $response['result'] = '__OK__';
+                $response['timeId'] = $timeTrack->getId();
             } else {
                 $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
             }
         } else {
             $response['msg'] = $this->get('translator')->trans('backend.global.unknown_error');
         }
+        return new JsonResponse($response);
+    }
+
+    /**
+     * Permite iniciar un contador de tiempo para una tarea determinada
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 06/04/2016
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function stopTimeAction(Request $request) {
+
+        $response = array('result' => '__KO__', 'msg' => '');
+        $em = $this->getDoctrine()->getManager();
+
+        $timeTrackId = trim(strip_tags($request->request->get('timeId')));
+
+        if ($timeTrackId != '') {
+            $timeTrack = $em->getRepository('BackendBundle:TimeTracking')->find($timeTrackId);
+
+            if ($timeTrack instanceof Entity\TimeTracking &&
+                    $this->container->get('access_control')->isAllowedProject($timeTrack->getProject()->getId())) {
+                $timeTrack->setEndTime(Util::getCurrentDate());
+
+                $workedTime = $this->container->get('time_tracker')
+                        ->getSecondsBetweenDates($timeTrack->getStartTime(), $timeTrack->getEndTime());
+                $timeTrack->setWorkedTime($workedTime);
+                $em->persist($timeTrack);
+                $em->flush();
+
+                $response['result'] = '__OK__';
+            } else {
+                $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
+            }
+        } else {
+            $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
+        }
+
+        return new JsonResponse($response);
+    }
+
+    /**
+     * Esta funcion permite obtener el codigo HTML correspondiente al listado 
+     * actualizado de los registros de tiempo del usuario logueado
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 07/04/2016
+     * @param Request $request Datos de la solicitud
+     * @return JsonResponse JSON con html de respuesta
+     */
+    public function updateTimeTrackingListAction(Request $request) {
+        $response = array('result' => '__OK__');
+        $em = $this->getDoctrine()->getManager();
+
+        $currentDate = Util::getCurrentDate();
+        $search = array('startDate' => $currentDate->modify('-5 days'), 'endDate' => Util::getCurrentDate());
+
+        $timeTracking = $em->getRepository('BackendBundle:TimeTracking')
+                ->findUserTimeTracking($this->getUser()->getId(), $search);
+
+        $html = $this->renderView('BackendBundle:TimeTracking:timeList.html.twig', array(
+            'time_tracking' => $timeTracking,
+        ));
+
+        $response['html'] = $html;
         return new JsonResponse($response);
     }
 
