@@ -56,6 +56,9 @@ backend:
         high: "Alta"
         select_action: "Seleccione una acción"
         select_method: "Seleccione el método"
+        project: "Proyecto"
+        task: "Tarea"
+        description: "Descripción"
     
     login:
         message: "Ingrese para acceder al área administrativa"
@@ -363,3 +366,8 @@ backend:
         time_tracking: "Registro de Tiempo"
         time: "Tiempo"
         empty_list: "Ningún registro de tiempo"
+        task_description: "Descripcion  de la tarea"
+        start: "Iniciar"
+        stop: "Detener"
+        select_task: "Seleccione la tarea"
+        time: "Tiempo"

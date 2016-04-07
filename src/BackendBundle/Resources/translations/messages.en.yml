@@ -56,6 +56,9 @@ backend:
         high: "High"
         select_action: "Select an action"
         select_method: "Select a method"
+        project: "Project"
+        task: "Task"
+        description: "Description"
         
     login:
         message: "Dear user, log in to access the admin area"
@@ -364,3 +367,8 @@ backend:
         time_tracking: "Time Tracking"
         time: "Time"
         empty_list: "No time entries"
+        task_description: "Task Description"
+        start: "Start"
+        stop: "Stop"
+        select_task: "Select Task"
+        time: "Time"

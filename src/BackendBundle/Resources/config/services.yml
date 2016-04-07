@@ -134,3 +134,11 @@ services:
             - "@service_container"
         tags:
             - { name: form.type }
+            
+    #servicio para formulario de registro de tiempos
+    backend.form.type.time_tracking:
+        class: BackendBundle\Form\TimeTracking\TimeTrackType
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: form.type }

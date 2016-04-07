@@ -2,7 +2,7 @@
 {% block title %}{{'backend.time_tracking.time_tracking'|trans}}{% endblock %}
 
 {% block content %}
-    
+
     <!-- Page Heading -->
     <div class="row">
         <div class="col-lg-12">
@@ -18,90 +18,186 @@
     <!-- /.row -->
     {{ filters.showMessage('messageSuccess', 'success')}}
     {{ filters.showMessage('messageError', 'danger')}}
-    
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>{{ 'backend.global.date'|trans }}</th>
-                    <th>{{ 'backend.item.description'|trans }}</th>
-                    <th>{{ 'backend.project.name'|trans }}</th>
-                    <th>{{ 'backend.time_tracking.time'|trans }}</th>
-                    <th>{{ 'backend.global.options'|trans }}</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% set dateFormat = app_settings.getDefaultDateFormat() %}
-            {% set hourFormat = app_settings.getDefaultHourFormat() %}
-            {% for time in time_tracking %}
-                <tr>
-                    <td>{{ time.date|date(dateFormat) }}</td>
-                    <td>{{ time }}</td>
-                    <td>{{ time.project.name }}</td>
-                    <td>
-                        {{ time.workedTime }}
-                        <br>
-                        {{ time.startTime|date(hourFormat) }} - {{ time.endTime|date(hourFormat) }}
-                    </td>
-                    <td>
-                        <a class="btn btn-danger btn-md delete-time" time-id="{{time.id}}" title="" href="javascript:void(0);">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5">{{ 'backend.time_tracking.empty_list'|trans }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+
+    <div class="col-lg-12 no-padding-sides">
+        {{ form_start(form, {'action': path('backend_time_tracking_start_time'), 'method': 'POST', 'attr':{'id':'form-time'}}) }}
+        <div class="col-lg-12 col-md-12 col-xs-12 breadcrumb no-padding-sides no-padding-bottom">
+            <div class="form-group col-lg-2 col-md-6 col-xs-6">
+                {{ form_label(form.project)}}<em>*</em>
+                {{ form_widget(form.project, {'attr':{'class':'form-control'}}) }}
+                {{ form_errors(form.project) }}
+            </div>
+            <div class="form-group col-lg-4 col-md-6 col-xs-6">
+                {{ form_label(form.taskId)}}<em>*</em>
+                {{ form_widget(form.taskId, {'attr':{'class':'form-control'}}) }}
+                {{ form_errors(form.taskId) }}
+            </div>
+            <div class="form-group col-lg-3 col-md-6 col-xs-6">
+                {{ form_label(form.description)}}
+                {{ form_widget(form.description, {'attr':{'class':'form-control'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+            <div class="form-group col-lg-3 col-md-6 col-xs-6">
+                <div class="col-xs-12 text-center no-padding-sides">
+                    <div class="clock"></div>
+                    <div class="message"></div>
+                </div>
+                <div class="col-xs-12 text-center">
+                    {{ form_widget(form._token) }} 
+                    {% if time_track.startTime is empty %}
+                        <button type="submit" id="start-time" class="btn btn-primary btn-lg pull-right">{{ 'backend.time_tracking.start'|trans }}</button>
+                        <a id="stop-time" class="btn btn-danger btn-lg hidden">{{ 'backend.time_tracking.stop'|trans }}</a>
+                    {% else %}
+                        <button type="submit" id="start-time" class="btn btn-primary btn-lg pull-right hidden">{{ 'backend.time_tracking.start'|trans }}</button>
+                        <a id="stop-time" class="btn btn-danger btn-lg">{{ 'backend.time_tracking.stop'|trans }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    <div class="row">
+        <div class="table-responsive col-lg-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'backend.global.date'|trans }}</th>
+                        <th>{{ 'backend.item.description'|trans }}</th>
+                        <th>{{ 'backend.project.name'|trans }}</th>
+                        <th>{{ 'backend.time_tracking.time'|trans }}</th>
+                        <th>{{ 'backend.global.options'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set dateFormat = app_settings.getDefaultDateFormat() %}
+                    {% set hourFormat = app_settings.getDefaultHourFormat() %}
+                    {% for time in time_tracking %}
+                        <tr>
+                            <td>{{ time.date|date(dateFormat) }}</td>
+                            <td>{{ time }}</td>
+                            <td>{{ time.project.name }}</td>
+                            <td>
+                                {{ time.workedTime }}
+                                <br>
+                                {{ time.startTime|date(hourFormat) }} - {{ time.endTime|date(hourFormat) }}
+                            </td>
+                            <td>
+                                <a class="btn btn-danger btn-md delete-time" time-id="{{time.id}}" title="" href="javascript:void(0);">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">{{ 'backend.time_tracking.empty_list'|trans }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}
 
+{% block functions_javascript %}
+    var clock;
+{% endblock %}
+
 {% block scripts %}
-    {# Codigo para rechazar invitaciones pendientes #}
-    $(".reject-invitation").click(function () {
-        var object = $(this);
-        var invitationId = object.attr('invitation-id');
+        {% if time_track.startTime is not empty %}
+            clock = $('.clock').FlipClock({
+                clockFace: 'HourlyCounter'
+            });
 
-        bootbox.confirm({
-            message: "{{'backend.project_invitation.reject_warning'|trans}}",
-            buttons: {
-                'cancel': {
-                    label: '{{'backend.global.cancel' | trans}}',
-                    className: 'btn-default'
-                },
-                'confirm': {
-                    label: '{{'backend.project_invitation.reject' | trans}}',
-                    className: 'btn-danger'
-                }
-            },
-            callback: function (result) {
+            clock.setTime(600);
 
-                if (result == true)
-                {
-                    $.ajax({
-                        type: 'POST',
-                        url: "{{path('backend_notifications_reject')}}",
-                        dataType: 'json',
-                        data: {invitationId: invitationId},
-                        success: function (r)
-                        {
-                            if (r.result == '__OK__') {
-                                window.location.reload();
-                            } else {
-                                bootbox.alert(r.msg);
-                            }
-                        },
-                        error: function (r)
-                        {
-                            bootbox.alert("{{'backend.global.unknown_error'|trans}}")
+            //clock.start(function() {
+            // this (optional) callback will fire each time the clock flips
+            //});
+
+            // clock.stop(function() {
+            // this (optional) callback will fire after the clock stops
+            //});
+
+            //var time  = clock.getTime();
+        {% endif %}
+
+        $("#backendbundle_time_track_type_taskId").select2({
+            placeholder: "{{'backend.time_tracking.select_task'|trans}}",
+            allowClear: true,
+        });
+        $("span.select2-selection").css('height', '34px');
+        $("span.select2-container--default").css('width', '100%');
+
+        {# Codigo para cargar las tareas de un proyecto en especifico #}
+        $("#backendbundle_time_track_type_project").change(function () {
+            var object = $(this);
+            var projectId = object.val();
+
+            if (projectId != '') {
+
+                $("#backendbundle_time_track_type_taskId").attr('disabled', 'disabled');
+                $("#backendbundle_time_track_type_taskId").select2("val", "");
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('backend_time_tracking_get_project_items')}}",
+                    dataType: 'json',
+                    data: {projectId: projectId},
+                    async: false,
+                    success: function (resp)
+                    {
+                        $("#backendbundle_time_track_type_taskId").removeAttr('disabled');
+                        if (resp.result == '__OK__') {
+                            $("#backendbundle_time_track_type_taskId").html(resp.data.html);
+                        } else {
+                            bootbox.alert(resp.msg);
                         }
-                    });
-                }
+                    },
+                    error: function (resp)
+                    {
+                        $("#backendbundle_time_track_type_taskId").removeAttr('disabled');
+                        bootbox.alert("{{'backend.global.unknown_error'|trans}}");
+                    }
+                });
             }
         });
-    });
-    
-{% endblock %}
+
+        $("#backendbundle_time_track_type_project").trigger('change');
+
+
+        {# Codigo para enviar a almacenar la cita #}
+        $("#form-time").submit(function (e) {
+            e.preventDefault();
+
+            $("#start-time").attr('disabled', 'disabled');
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ path('backend_time_tracking_start_time') }}",
+                dataType: 'json',
+                data: $("#form-time").serialize(),
+                success: function (resp)
+                {
+                    $("#start-time").removeAttr('disabled');
+
+                    if (resp.result == '__OK__') {
+                        $("#start-time").addClass('hidden');
+                        $("#stop-time").removeClass('hidden');
+                        console.log(resp);
+
+                    } else {
+                        bootbox.alert(resp.msg);
+                    }
+                },
+                error: function (resp)
+                {
+                    $("#saveDiary").removeAttr('disabled');
+                    bootbox.alert("{{'backend.global.unknown_error'|trans}}");
+                }
+            });
+        });
+
+        $("#stop-time").click(function () {
+            console.log('vamos a detener el tiempo');
+        });
+    {% endblock %}
