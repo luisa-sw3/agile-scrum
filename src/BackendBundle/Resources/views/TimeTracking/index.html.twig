@@ -222,4 +222,52 @@
             });
         }
     });
+    
+    {# Codigo para realizar la eliminacion de registros de tiempo #}
+    $( "#time-list" ).on( "click", ".delete-time", function( event ) {
+        var object = $(this);
+        var timeId = object.attr('time-id');
+        
+        if (timeId != '') {
+            bootbox.confirm({
+                message: "{{'backend.time_tracking.delete_time_warning'|trans}}",
+                buttons: {
+                    'cancel': {
+                        label: '{{'backend.global.cancel' | trans}}',
+                        className: 'btn-default'
+                    },
+                    'confirm': {
+                        label: '{{'backend.global.delete' | trans}}',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result == true) {
+                        object.attr('disabled', 'disabled');
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{ path('backend_time_tracking_delete_time') }}",
+                            dataType: 'json',
+                            data: {timeId: timeId},
+                            success: function (resp)
+                            {
+                                object.removeAttr('disabled');
+
+                                if (resp.result == '__OK__') {
+                                    updateTimeList();
+                                } else {
+                                    bootbox.alert(resp.msg);
+                                }
+                            },
+                            error: function (resp)
+                            {
+                                object.removeAttr('disabled');
+                                bootbox.alert("{{'backend.global.unknown_error'|trans}}");
+                            }
+                        });
+                    }
+                }
+            });
+        } 
+    });
 {% endblock %}

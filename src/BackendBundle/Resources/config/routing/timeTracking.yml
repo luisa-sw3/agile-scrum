@@ -12,6 +12,11 @@ backend_time_tracking_stop_time:
     defaults: { _controller: BackendBundle:TimeTracking:stopTime }
     methods: [POST]
     
+backend_time_tracking_delete_time:
+    path:     /deleteTime
+    defaults: { _controller: BackendBundle:TimeTracking:deleteTime }
+    methods: [POST]
+    
 backend_time_tracking_get_project_items:
     path:     /getProjectItems
     defaults: { _controller: BackendBundle:TimeTracking:getProjectItems }

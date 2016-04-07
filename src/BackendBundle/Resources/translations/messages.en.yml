@@ -374,3 +374,4 @@ backend:
         time: "Time"
         select_task_warning: "Please select or describe a task"
         select_project_warning: "Please select a project"
+        delete_time_warning: "Are you sure you want to delete this entry?"

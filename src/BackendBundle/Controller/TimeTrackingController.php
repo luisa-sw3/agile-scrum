@@ -133,6 +133,7 @@ class TimeTrackingController extends Controller {
 
             if ($item instanceof Entity\Item &&
                     $this->container->get('access_control')->isAllowedProject($item->getProject()->getId())) {
+                
                 $timeTrack->setItem($item);
                 $timeTrack->setProject($item->getProject());
 
@@ -174,15 +175,20 @@ class TimeTrackingController extends Controller {
 
             if ($timeTrack instanceof Entity\TimeTracking &&
                     $this->container->get('access_control')->isAllowedProject($timeTrack->getProject()->getId())) {
-                $timeTrack->setEndTime(Util::getCurrentDate());
 
-                $workedTime = $this->container->get('time_tracker')
-                        ->getSecondsBetweenDates($timeTrack->getStartTime(), $timeTrack->getEndTime());
-                $timeTrack->setWorkedTime($workedTime);
-                $em->persist($timeTrack);
-                $em->flush();
+                if (empty($timeTrack->getEndTime())) {
+                    $timeTrack->setEndTime(Util::getCurrentDate());
 
-                $response['result'] = '__OK__';
+                    $workedTime = $this->container->get('time_tracker')
+                            ->getSecondsBetweenDates($timeTrack->getStartTime(), $timeTrack->getEndTime());
+                    $timeTrack->setWorkedTime($workedTime);
+                    $em->persist($timeTrack);
+                    $em->flush();
+
+                    $response['result'] = '__OK__';
+                } else {
+                    $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message').".";
+                }
             } else {
                 $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
             }
@@ -215,6 +221,40 @@ class TimeTrackingController extends Controller {
         ));
 
         $response['html'] = $html;
+        return new JsonResponse($response);
+    }
+
+    /**
+     * Permite eliminar un registro de tiempo de la base de datos
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 07/04/2016
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function deleteTimeAction(Request $request) {
+
+        $response = array('result' => '__KO__', 'msg' => '');
+        $em = $this->getDoctrine()->getManager();
+
+        $timeTrackId = trim(strip_tags($request->request->get('timeId')));
+
+        if ($timeTrackId != '') {
+            $timeTrack = $em->getRepository('BackendBundle:TimeTracking')->find($timeTrackId);
+
+            if ($timeTrack instanceof Entity\TimeTracking &&
+                    $this->container->get('access_control')->isAllowedProject($timeTrack->getProject()->getId()) &&
+                    $timeTrack->getUser()->getId() == $this->getUser()->getId()) {
+
+                $em->remove($timeTrack);
+                $em->flush();
+
+                $response['result'] = '__OK__';
+            } else {
+                $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
+            }
+        } else {
+            $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
+        }
+
         return new JsonResponse($response);
     }
 
