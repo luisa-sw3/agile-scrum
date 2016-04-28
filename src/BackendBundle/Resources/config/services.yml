@@ -16,6 +16,9 @@ services:
             requestStack:   "@request_stack"
             container:      "@service_container"
             entityManager:  "@doctrine.orm.entity_manager"
+            
+    time_tracker:
+        class: BackendBundle\Services\TimeTracker
     
     #servicio para clase de ayuda para implementar formularios
     form_helper:
@@ -130,6 +133,22 @@ services:
     #servicio para formulario de sprints de un proyecto
     backend.form.type.sprint:
         class: BackendBundle\Form\SprintType
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: form.type }
+            
+    #servicio para formulario de registro de tiempos
+    backend.form.type.time_tracking:
+        class: BackendBundle\Form\TimeTracking\TimeTrackType
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: form.type }
+    
+    #servicio para formulario de busqueda de registro de tiempos
+    backend.form.type.search_time_tracking:
+        class: BackendBundle\Form\TimeTracking\SearchTimeTrackType
         arguments:
             - "@service_container"
         tags:

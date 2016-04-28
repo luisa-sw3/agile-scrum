@@ -28,6 +28,10 @@
         <!-- Bootstrap Datepicker -->
         <link href="{{asset('bundles/backend/css/bootstrap-datetimepicker.css')}}" rel="stylesheet" type="text/css">
         
+        <!-- Select2 CSS -->
+        <link href="{{asset('bundles/backend/select2/select2.css')}}" rel="stylesheet" type="text/css">
+        <link href="{{asset('bundles/backend/select2/select2-bootstrap.css')}}" rel="stylesheet" type="text/css">
+        
         <!-- Fancybox Styles -->
         <link rel="stylesheet" href="{{asset('bundles/backend/fancybox/source/jquery.fancybox.css?v=2.1.5')}}" type="text/css" media="screen" />
         <link rel="stylesheet" href="{{ asset('bundles/backend/fancybox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5')}}" type="text/css" media="screen" />
@@ -43,6 +47,10 @@
         <!-- Sortable Styles -->
         <link href="{{asset('bundles/backend/css/sortable.css')}}" rel="stylesheet" type="text/css">
         
+        <!-- FlipClock CSS -->
+        <link href="{{asset('bundles/backend/flipclock/flipclock.css')}}" rel="stylesheet" type="text/css">
+        <link href="{{asset('bundles/backend/flipclock/flipclock-reset.css')}}" rel="stylesheet" type="text/css">
+        
         <script src="//fast.eager.io/hxDaah_Pcn.js"></script>
         
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -51,6 +59,8 @@
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
+        {% block other_styles %}
+        {% endblock %}
     </head>
 
     <body>
@@ -95,6 +105,12 @@
         
         <!-- Libreria para ordenar mediante jQuery -->
         <script type="text/javascript" src="{{ asset('bundles/backend/js/jquery-sortable-min.js') }}"></script>
+        
+        <!-- Select2 JS -->
+        <script type="text/javascript" src="{{ asset('bundles/backend/select2/select2.js') }}"></script>
+        
+        <!-- FlipClock JS -->
+        <script type="text/javascript" src="{{ asset('bundles/backend/flipclock/flipclock.js') }}"></script>
         
         <!-- Fancybox JS -->
         <script type="text/javascript" src="{{ asset('bundles/backend/fancybox/lib/jquery.mousewheel-3.0.6.pack.js') }}"></script>

@@ -30,6 +30,17 @@
                 <li>
                     <a href="{{ path('backend_login') }}">{{'frontend.pages.sign_in'|trans}}</a>
                 </li>
+                <li>
+                    {% set request_method =  app.request.method %}
+                    {% set currentPath = 'frontend_homepage' %}
+                    {% set params = {} %}
+                    {% if request_method == 'GET' %}
+                        {% set currentPath = app.request.attributes.get('_route') %}
+                        {% set params = app.request.attributes.get('_route_params') %}
+                    {% endif %}
+                    <a class="pull-right" href="{{ path(currentPath, params|merge({'_locale':'en'})) }}" title="{{'frontend.lang.english'|trans}}"><img src="{{ asset('bundles/backend/images/lang/english.png') }}" style="cursor: pointer; width: 26px;"/></a>
+                    <a class="pull-right" href="{{ path(currentPath, params|merge({'_locale':'es'})) }}" title="{{'frontend.lang.spanish'|trans}}"><img src="{{ asset('bundles/backend/images/lang/spanish.png') }}" style="cursor: pointer; width: 26px;"/></a> &nbsp;
+                </li>
             </ul>
         </div>
         <!-- /.navbar-collapse -->

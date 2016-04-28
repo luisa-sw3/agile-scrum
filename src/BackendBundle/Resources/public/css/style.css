@@ -297,3 +297,7 @@ span.label-notification {
         width: 225px;
     }
 }
+
+.no-border {
+    border: none;
+}
