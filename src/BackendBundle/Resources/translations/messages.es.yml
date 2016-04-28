@@ -43,6 +43,8 @@ backend:
         search: "Buscar"
         clear_search: "Borrar Búsqueda"
         showing: "Mostrando"
+        from: "desde"
+        until: "hasta"
         to: "a"
         of: "de"
         or: "o"
@@ -375,3 +377,4 @@ backend:
         select_project_warning: "Por favor seleccione un proyecto"
         delete_time_warning: "Estas seguro que deseas eliminar este registro?"
         start_task: "Iniciar esta Tarea"
+        total_time: "Tiempo Total"

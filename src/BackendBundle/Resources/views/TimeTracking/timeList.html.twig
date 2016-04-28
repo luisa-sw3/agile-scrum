@@ -1,18 +1,26 @@
 {% spaceless %}
+{% set dateFormat = 'd/m/Y' %}
+{% set hourFormat = app_settings.getDefaultHourFormat() %}
+<legend class="no-border">
+    {{search.startDate|date(dateFormat)}} {{'backend.global.to'|trans}} {{search.endDate|date(dateFormat)}}
+    <a class="btn btn-default btn-sm edit-time-search"><i class="fa fa-search"></i></a>
+    <small id="container-elapsed-time" class="pull-right label label-info"></small>
+</legend>
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
             <th>{{ 'backend.global.date'|trans }}</th>
             <th>{{ 'backend.item.description'|trans }}</th>
             <th>{{ 'backend.project.name'|trans }}</th>
-            <th>{{ 'backend.time_tracking.time'|trans }}</th>
-            <th>{{ 'backend.global.options'|trans }}</th>
+            <th width="150px">{{ 'backend.time_tracking.time'|trans }}</th>
+            <th width="100px">{{ 'backend.global.options'|trans }}</th>
         </tr>
     </thead>
     <tbody>
-        {% set dateFormat = app_settings.getDefaultDateFormat() %}
-        {% set hourFormat = app_settings.getDefaultHourFormat() %}
+        
+        {% set workedTime = 0 %}
         {% for time in time_tracking %}
+            {% set workedTime = workedTime + time.workedTime %}
             <tr>
                 <td>{{ time.date|date(dateFormat) }}</td>
                 <td id='description-time-{{time.id}}'>{{ time }}</td>
@@ -37,6 +45,16 @@
                 <td colspan="5">{{ 'backend.time_tracking.empty_list'|trans }}</td>
             </tr>
         {% endfor %}
+        {% if time_tracking|length > 0  %}
+            <tr>
+                <td colspan="2">&nbsp;</td>
+                <td><strong>{{'backend.time_tracking.total_time'|trans}}</strong></td>
+                <td><strong>{{ time_tracker.getElapsedTime(workedTime) }}</strong></td>
+                <script type="text/javascript">
+                    $("#container-elapsed-time").html("{{'backend.time_tracking.total_time'|trans}} : {{ time_tracker.getElapsedTime(workedTime)}}");
+                </script>
+            </tr>
+        {% endif %}
     </tbody>
 </table>
 {% endspaceless %}

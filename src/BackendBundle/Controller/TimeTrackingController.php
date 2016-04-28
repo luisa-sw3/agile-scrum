@@ -8,6 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use BackendBundle\Entity as Entity;
 use Util\Util;
 use BackendBundle\Form\TimeTracking\TimeTrackType;
+use BackendBundle\Form\TimeTracking\SearchTimeTrackType;
+use BackendBundle\Services\TimeTracker;
 
 /**
  * TimeTracking controller.
@@ -25,7 +27,7 @@ class TimeTrackingController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         $currentDate = Util::getCurrentDate();
-        $search = array('startDate' => $currentDate->modify('-5 days'), 'endDate' => Util::getCurrentDate());
+        $search = array('startDate' => $currentDate->modify('-'.TimeTracker::DEFAULT_DAYS_TO_SEARCH.' days'), 'endDate' => Util::getCurrentDate());
 
         $timeTracking = $em->getRepository('BackendBundle:TimeTracking')
                 ->findUserTimeTracking($this->getUser()->getId(), $search);
@@ -46,12 +48,16 @@ class TimeTrackingController extends Controller {
             $timeTrack->setWorkedTime($workedTime);
         }
         $form = $this->createForm(TimeTrackType::class, $timeTrack);
+        
+        $searchForm = $this->createForm(SearchTimeTrackType::class);
 
         return $this->render('BackendBundle:TimeTracking:index.html.twig', array(
                     'time_track' => $timeTrack,
                     'time_tracking' => $timeTracking,
                     'form' => $form->createView(),
+                    'searchForm' => $searchForm->createView(),
                     'menu' => self::MENU,
+                    'search' => $search,
         ));
     }
 
@@ -210,14 +216,21 @@ class TimeTrackingController extends Controller {
         $response = array('result' => '__OK__');
         $em = $this->getDoctrine()->getManager();
 
-        $currentDate = Util::getCurrentDate();
-        $search = array('startDate' => $currentDate->modify('-5 days'), 'endDate' => Util::getCurrentDate());
+        $startDate = $request->request->get('startDate');
+        $startDate = new \DateTime($startDate);
+        
+        $endDate = $request->request->get('endDate');
+        $endDate = new \DateTime($endDate);
+        $endDate->setTime(23, 59, 59);
+        
+        $search = array('startDate' => $startDate, 'endDate' => $endDate);
 
         $timeTracking = $em->getRepository('BackendBundle:TimeTracking')
                 ->findUserTimeTracking($this->getUser()->getId(), $search);
 
         $html = $this->renderView('BackendBundle:TimeTracking:timeList.html.twig', array(
             'time_tracking' => $timeTracking,
+            'search' => $search,
         ));
 
         $response['html'] = $html;

@@ -57,24 +57,47 @@
         {{ form_end(form) }}
     </div>
 
+    <div class="col-lg-12 no-padding-sides container-search-form" style="display: none;">
+        {{ form_start(searchForm, {'action': path('backend_time_update_time_tracking_list'), 'method': 'POST', 'attr':{'id':'form-search-time'}}) }}
+        <div class="col-lg-12 col-md-12 col-xs-12 breadcrumb no-padding-sides no-padding-bottom">
+            <div class="form-group col-lg-3 col-md-4 col-xs-6">
+                {{ form_label(searchForm.startDate)}}<em>*</em>
+                {{ form_widget(searchForm.startDate, {'attr':{'class':'form-control'}}) }}
+                {{ form_errors(searchForm.startDate) }}
+            </div>
+            <div class="form-group col-lg-3 col-md-4 col-xs-6">
+                {{ form_label(searchForm.endDate)}}<em>*</em>
+                {{ form_widget(searchForm.endDate, {'attr':{'class':'form-control'}}) }}
+                {{ form_errors(searchForm.endDate) }}
+            </div>
+            <div class="form-group col-lg-3 col-md-4 col-xs-6" style="padding-top: 23px;">
+                {{ form_widget(searchForm._token) }} 
+                <button type="submit" id="search-time" class="btn btn-primary btn-md" title="{{ 'backend.global.search'|trans }}"><i class="fa fa-search"></i></button>
+                <a id="cancel-search" class="btn btn-danger btn-md" title="{{ 'backend.global.cancel'|trans }}"><i class="fa fa-times"></i></a>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+    
+    
     <div class="row">
         <div class="table-responsive col-lg-12" id="time-list">
-            {% include 'BackendBundle:TimeTracking:timeList.html.twig' %}
         </div>
     </div>
 {% endblock %}
 
 {% block functions_javascript %}
     var clock;
-    
+
     /**
      * Permite actualizar la lista de tiempos del usuario
      **/
-    function updateTimeList() {
+    function updateTimeList(startDate, endDate) {
         $.ajax({
             type: 'POST',
             url: "{{ path('backend_time_update_time_tracking_list') }}",
             dataType: 'json',
+            data: {startDate: startDate, endDate: endDate},
             success: function (resp)
             {
                 if (resp.result == '__OK__') {
@@ -83,6 +106,7 @@
             }
         });
     }
+    
 {% endblock %}
 
 {% block scripts %}
@@ -227,6 +251,8 @@
         }
     });
     
+    //edit-time-search
+    
     {# Codigo para realizar la eliminacion de registros de tiempo #}
     $( "#time-list" ).on( "click", ".delete-time", function( event ) {
         var object = $(this);
@@ -305,5 +331,59 @@
             }
         }
     });
+    
+    {# Codigo para realizar una busqueda de tiempos entre fechas #}
+    $("#form-search-time").submit(function (e) {
+        e.preventDefault();
+
+        var startDate = $('#backendbundle_search_time_track_type_startDate').data("DateTimePicker").date();
+        startDate = startDate.format('Y-MM-DD');
+        
+        var endDate = $('#backendbundle_search_time_track_type_endDate').data("DateTimePicker").date();
+        endDate = endDate.format('Y-MM-DD');
+        
+        updateTimeList(startDate, endDate);
+    });
+    
+    {# Codigo para poner el funcionar el datepicker start date #}
+    $('#backendbundle_search_time_track_type_startDate').datetimepicker({
+        inline: false,
+        format: 'DD/MM/YYYY',
+        date: "{{search.startDate|date('m/d/Y')}}"
+    });
+
+    {# Codigo para poner el funcionar el datepicker end date #}
+    $('#backendbundle_search_time_track_type_endDate').datetimepicker({
+        useCurrent: false,
+        inline: false,
+        format: 'DD/MM/YYYY',
+        date: "{{search.endDate|date('m/d/Y')}}"
+    });
+
+    {# Codigo para validar el start date con respecto al end date #}
+    $("#backendbundle_search_time_track_type_startDate").on("dp.change", function (e) {
+        $('#backendbundle_search_time_track_type_endDate').data("DateTimePicker").minDate(e.date);
+    });
+    
+    {# Codigo para validar el end date con respecto al start date #}
+    $("#backendbundle_search_time_track_type_endDate").on("dp.change", function (e) {
+        $('#backendbundle_search_time_track_type_startDate').data("DateTimePicker").maxDate(e.date);
+    });
+    
+    //
+    
+    {# Codigo para desplegar el buscador de tiempos #}
+    $( "#time-list" ).on( "click", ".edit-time-search", function( event ) {
+        $(".container-search-form").slideDown();
+    });
+    
+    {# Codigo para ocultar el buscador de tiempos #}
+    $("#cancel-search").click(function(){
+        $(".container-search-form").slideUp();
+    });
+    
+    {# Codigo para solicitar la tabla de tiempos al cargar la pagina #}
+    {% set dateFormat = app_settings.getDefaultDateFormat() %}
+    updateTimeList("{{search.startDate|date(dateFormat)}}", "{{search.endDate|date(dateFormat)}}");
     
 {% endblock %}
