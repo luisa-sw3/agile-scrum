@@ -59,5 +59,8 @@
                 </ul>
             </li>#}
         {% endif %}
+        <li {% if menu is defined and menu == 'menu_time_tracking'%}class="active"{% endif %}>
+            <a href="{{ path('backend_time_tracking') }}" title="{{ 'backend.time_tracking.time_tracking'|trans }}"><i class="fa fa-fw fa-clock-o fa-2x"></i> <span class="nav-title hidden">{{ 'backend.time_tracking.time_tracking'|trans }}</span></a>
+        </li>
     </ul>
 </div>
