@@ -1,0 +1,130 @@
+{% extends 'BackendBundle:Default:main.html.twig' %}
+{% block title %}{{'backend.report.reports'|trans}}{% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                {{'backend.report.users'|trans}}
+                <a href="{{ path('backend_project_reports', {'id':project.id}) }}" class="btn btn-default pull-right">{{'backend.global.back'|trans}}</a>
+            </h1>
+
+            {% set item2 = {'text': project.name, 'url':path('backend_projects_view',{'id':project.id}),'icon':'fa fa-dashboard'} %}
+            {% set item3 = {'text': 'backend.report.reports'|trans, 'url':path('backend_project_reports',{'id':project.id}), 'icon':'fa fa-file-text-o'} %}
+            {% set item4 = {'text': 'backend.report.users'|trans, 'icon':'fa fa-users'} %}
+            {% set items = [item2, item3, item4] %}
+            {{ filters.breadcrum(items) }}
+        </div>
+    </div>
+    <!-- /.row -->
+    {{ filters.showMessage('messageSuccess', 'success')}}
+    {{ filters.showMessage('messageError', 'danger')}}
+    
+
+    <!-- Seleccion de un usuario para mostrar sprints -->
+    <div class="row">
+        <div class="col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label>{{'backend.report.userSelect'|trans}}</label>
+                    <select id="userselect" name="userselect" class="form-control">
+                        {% if users %}                            
+                            {% if users|length == 1 %}
+                                <option value="select" selected="selected">-- {{ 'backend.report.userSelect'|trans}} --</option>
+                                {% for user in users %}
+                                    <option value="{{user.id}}">{{ user.name }} {{ user.lastname }}</option>
+                                {% endfor %}
+                            {% else %} 
+                                <option value="select" selected="selected">-- {{ 'backend.report.userSelect'|trans}} --</option>
+                                <option value="all">{{'backend.report.userAll'|trans}}</option>
+                                {% for user in users %}
+                                    <option value="{{user.id}}">{{ user.name }} {{ user.lastname }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        {% else %}
+                            <option value="empty" selected="selected">{{'backend.report.empty_list'|trans}}</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Seleccion de los sprints -->
+        <div class="col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label>{{'backend.report.sprintSelect'|trans}}</label>
+                    <select id="sprintselect" name="sprintselect" class="form-control">
+                        {# Al momento de seleccionar un usuario el AJAX se encarga de llenar este campo con las opciones #}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    $("#userselect").change(function () {    
+        var userId = $(this).val();
+        var id_String = 'user_id=' + userId;
+
+        $.ajax({
+            type: 'POST',
+            url: "{{ path('backend_project_reports_user_select', {'id':project.id}) }}",
+            dataType: 'json',
+            data: id_String,
+            async: false,
+            success: function(resp){           
+                if (resp.result == '__OK__')
+                {
+                    $("#sprintselect").html(resp.html);
+                    $("#sprintselect").trigger('change');                
+                }
+            },
+            error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            alert(err.Message);
+            }
+        });
+    });
+    
+    $('#userselect').change(function() {
+        userId = $(this).val();
+        
+        var sprintId = document.getElementById("sprintselect").value;
+        
+        document.getElementById("sprintselect").addEventListener('change', function() {
+            sprintId = '';
+            sprintId = document.getElementById("sprintselect").value;
+            console.log('user_id= ' + userId +' sprint_id= '+ sprintId + " ONCHANGE");
+            
+            if( !(sprintId == "select") ){
+                window.location.href = '{{ path('backend_project_reports_user_sprint', {'id':project.id}) }}?user_id=' + userId +'&sprint_id='+ sprintId;
+            }
+            else{
+                alert("Seleccione un Sprint!");
+                
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('backend_project_reports_user_select', {'id':project.id}) }}",
+                    dataType: 'json',
+                    data: 'user_id=' + userId,
+                    async: false,
+                    success: function(resp){           
+                        if (resp.result == '__OK__')
+                        {
+                            $("#sprintselect").html(resp.html);
+                            $("#sprintselect").trigger('change');                
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                    }
+                });
+            }
+        }, false);
+    });
+
+{% endblock %}
