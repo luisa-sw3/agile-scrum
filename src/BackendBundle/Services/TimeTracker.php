@@ -2,8 +2,8 @@
 
 namespace BackendBundle\Services;
 
-use Symfony\Component\DependencyInjection\Container;
 use BackendBundle\Entity as Entity;
+use Doctrine\ORM\EntityManager;
 
 /*
  * TimeTracker
@@ -13,7 +13,18 @@ use BackendBundle\Entity as Entity;
 class TimeTracker {
 
     const DEFAULT_DAYS_TO_SEARCH = 8;
-    
+
+    private $em;
+
+    /**
+     * Constructor del servicio
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 28/04/2016
+     * @param EntityManager $entityManager
+     */
+    public function __construct(EntityManager $entityManager) {
+        $this->em = $entityManager;
+    }
+
     /**
      * Permite obtener el numero de segundos que hay entre dos fechas
      * @param \DateTime $startDate fecha inicial
@@ -51,6 +62,24 @@ class TimeTracker {
         }
 
         return join(' ', $ret);
+    }
+
+    public function getWorkedTimePerDay($date, $userId, $natural = false) {
+
+        $startDate = new \DateTime($date);
+        $startDate->setTime(00, 00, 00);
+
+        $endDate = new \DateTime($date);
+        $endDate->setTime(23, 59, 59);
+
+        $search = array('startDate' => $startDate, 'endDate' => $endDate);
+
+        $workedTime = $this->em->getRepository('BackendBundle:TimeTracking')
+                ->findWorkedTime($userId, $search);
+        if ($natural) {
+            return $this->getElapsedTime($workedTime);
+        }
+        return $workedTime;
     }
 
 }

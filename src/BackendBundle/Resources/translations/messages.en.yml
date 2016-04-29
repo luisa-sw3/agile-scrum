@@ -61,6 +61,8 @@ backend:
         project: "Project"
         task: "Task"
         description: "Description"
+        today: "Today"
+        yesterday: "Yesterday"
         
     login:
         message: "Dear user, log in to access the admin area"

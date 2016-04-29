@@ -89,6 +89,10 @@
 {% block functions_javascript %}
     var clock;
 
+    {% set dateFormat = app_settings.getDefaultDateFormat() %}
+    var searchStartDate = "{{search.startDate|date(dateFormat)}}";
+    var searchEndDate = "{{search.endDate|date(dateFormat)}}";
+    
     /**
      * Permite actualizar la lista de tiempos del usuario
      **/
@@ -236,7 +240,7 @@
                         clock.stop();
                         $("#backendbundle_time_track_type_taskId").select2("val", "");
                         $("#backendbundle_time_track_type_description").val('');
-                        updateTimeList();
+                        updateTimeList(searchStartDate, searchEndDate);
                         $(".continue-time").removeClass('hidden');
                     } else {
                         bootbox.alert(resp.msg);
@@ -284,7 +288,7 @@
                                 object.removeAttr('disabled');
 
                                 if (resp.result == '__OK__') {
-                                    updateTimeList();
+                                    updateTimeList(searchStartDate, searchEndDate);
                                 } else {
                                     bootbox.alert(resp.msg);
                                 }
@@ -337,12 +341,12 @@
         e.preventDefault();
 
         var startDate = $('#backendbundle_search_time_track_type_startDate').data("DateTimePicker").date();
-        startDate = startDate.format('Y-MM-DD');
+        searchStartDate = startDate.format('Y-MM-DD');
         
         var endDate = $('#backendbundle_search_time_track_type_endDate').data("DateTimePicker").date();
-        endDate = endDate.format('Y-MM-DD');
+        searchEndDate = endDate.format('Y-MM-DD');
         
-        updateTimeList(startDate, endDate);
+        updateTimeList(searchStartDate, searchEndDate);
     });
     
     {# Codigo para poner el funcionar el datepicker start date #}
@@ -374,7 +378,7 @@
     
     {# Codigo para desplegar el buscador de tiempos #}
     $( "#time-list" ).on( "click", ".edit-time-search", function( event ) {
-        $(".container-search-form").slideDown();
+        $(".container-search-form").slideToggle();
     });
     
     {# Codigo para ocultar el buscador de tiempos #}
@@ -383,7 +387,6 @@
     });
     
     {# Codigo para solicitar la tabla de tiempos al cargar la pagina #}
-    {% set dateFormat = app_settings.getDefaultDateFormat() %}
-    updateTimeList("{{search.startDate|date(dateFormat)}}", "{{search.endDate|date(dateFormat)}}");
+    updateTimeList(searchStartDate, searchEndDate);
     
 {% endblock %}

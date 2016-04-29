@@ -9,7 +9,6 @@
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th>{{ 'backend.global.date'|trans }}</th>
             <th>{{ 'backend.item.description'|trans }}</th>
             <th>{{ 'backend.project.name'|trans }}</th>
             <th width="150px">{{ 'backend.time_tracking.time'|trans }}</th>
@@ -18,11 +17,31 @@
     </thead>
     <tbody>
         
+        {% set today = ('now')|date %}
+        {% set yesterday = (('now')|date)|date_modify("-1 day") %}
+        {% set lastDate = '' %}
         {% set workedTime = 0 %}
         {% for time in time_tracking %}
             {% set workedTime = workedTime + time.workedTime %}
+           
+            {% if lastDate != time.date|date('Y-m-d') %}
+                {# en el listado hubo un cambio de fecha #}
+                <tr>
+                    <td colspan="4">
+                        {% set lastDate = time.date|date('Y-m-d') %}
+                        <span class="time-title">
+                            {% if lastDate == today|date('Y-m-d') %}
+                                {{'backend.global.today'|trans}}, 
+                            {% elseif lastDate == yesterday|date('Y-m-d') %}
+                                {{'backend.global.yesterday'|trans}}, 
+                            {% endif %}
+                            {{ time.date|date(dateFormat) }}
+                        </span>
+                        <span class="worked-time-day">({{ time_tracker.getWorkedTimePerDay(lastDate, app.user.id, true)}})</span>
+                    </td>
+                </tr>
+            {% endif %}
             <tr>
-                <td>{{ time.date|date(dateFormat) }}</td>
                 <td id='description-time-{{time.id}}'>{{ time }}</td>
                 <td>{{ time.project.name }}</td>
                 <td>
