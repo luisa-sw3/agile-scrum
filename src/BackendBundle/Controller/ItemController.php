@@ -155,6 +155,11 @@ class ItemController extends Controller {
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
 
+            //verificamos los ciclos de correccion del item
+            if ($previousItem->getStatus() != $item->getStatus() && $item->getStatus() == Entity\Item::STATUS_READY_FOR_TESTING) {
+                $item->setFixedOnCycle($item->getFixedOnCycle() + 1);
+            }
+            
             $em->persist($item);
             $em->flush();
 
@@ -247,7 +252,7 @@ class ItemController extends Controller {
                             $em->flush();
 
                             //guardamos el registro en el historial
-                            $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_ATTACHMENT_ADDED, null, ': <strong>'.$attachment->getName().'</strong>');
+                            $this->container->get('app_history')->saveItemHistory($item, Entity\ItemHistory::ITEM_ATTACHMENT_ADDED, null, ': <strong>' . $attachment->getName() . '</strong>');
 
                             $html = $this->renderView('BackendBundle:Project/ProductBacklog:attachmentDetails.html.twig', array(
                                 'attach' => $attachment,
@@ -311,7 +316,7 @@ class ItemController extends Controller {
             $em->flush();
 
             //guardamos el registro en el historial
-            $this->container->get('app_history')->saveItemHistory($attachment->getItem(), Entity\ItemHistory::ITEM_ATTACHMENT_DELETED, null, ': <strong>'.$attachment->getName().'</strong>');
+            $this->container->get('app_history')->saveItemHistory($attachment->getItem(), Entity\ItemHistory::ITEM_ATTACHMENT_DELETED, null, ': <strong>' . $attachment->getName() . '</strong>');
         } catch (\Exception $ex) {
             $response['result'] = '__KO__';
             $response['msg'] = $this->get('translator')->trans('backend.global.unknown_error');
@@ -735,6 +740,12 @@ class ItemController extends Controller {
 
         try {
             $item->setStatus($status);
+
+            //verificamos los ciclos de correccion del item
+            if ($previousStatus != $status && $status == Entity\Item::STATUS_READY_FOR_TESTING) {
+                $item->setFixedOnCycle($item->getFixedOnCycle() + 1);
+            }
+
             $em->persist($item);
             $em->flush();
 
@@ -872,6 +883,7 @@ class ItemController extends Controller {
         $newItem = clone $item;
         $newItem->setSprint($sprint);
         $newItem->setParent($parent);
+        $newItem->setFixedOnCycle(null);
         $em->persist($newItem);
         $em->flush();
 
@@ -986,6 +998,7 @@ class ItemController extends Controller {
         $item->setSprint(null);
         $item->setParent($parent);
         $item->setProject($newProject);
+        $item->setFixedOnCycle(null);
         $em->persist($item);
         $em->flush();
 
@@ -1011,6 +1024,7 @@ class ItemController extends Controller {
         $newItem->setSprint(null);
         $newItem->setParent($parent);
         $newItem->setProject($newProject);
+        $newItem->setFixedOnCycle(null);
         $em->persist($newItem);
         $em->flush();
 
@@ -1019,8 +1033,7 @@ class ItemController extends Controller {
         $this->container->get('app_history')->saveItemHistory($newItem, Entity\ItemHistory::ITEM_PROJECT_COPIED, $changes, " : " . $newProject);
         return $newItem;
     }
-    
-    
+
     /**
      * Permite mover un item al Product Backlog
      * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 21/03/2016
@@ -1033,8 +1046,8 @@ class ItemController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $itemId = $request->request->get('itemId');
         $item = $em->getRepository('BackendBundle:Item')->find($itemId);
-        $previousSprint = $item->getSprint()."";
-        
+        $previousSprint = $item->getSprint() . "";
+
         if (!$item || ($item && $item->getProject()->getId() != $id)) {
             $response['result'] = '__KO__';
             $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
@@ -1050,6 +1063,7 @@ class ItemController extends Controller {
         try {
             $item->setSprint(null);
             $item->setParent(null);
+            $item->setFixedOnCycle(null);
             $em->persist($item);
             $em->flush();
 

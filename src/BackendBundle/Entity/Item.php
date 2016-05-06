@@ -39,7 +39,7 @@ class Item {
     const STATUS_CONFIRMED = 3;
     const STATUS_NOT_A_BUG = 4;
     const STATUS_BEING_WORKED_ON = 5;
-    const STATUS_NEAR_COMPLETION = 6;
+    const STATUS_BUG_DETECTED = 6;
     const STATUS_READY_FOR_TESTING = 7;
     const STATUS_TESTING = 8;
     const STATUS_CANCELED = 9;
@@ -110,6 +110,12 @@ class Item {
      */
     protected $priority;
 
+    /**
+     * Variable numérica para saber en que ciclo se ha corregido un error
+     * @ORM\Column(name="item_fixed_on_cycle", type="integer", nullable=true)
+     */
+    protected $fixedOnCycle;
+    
     /**
      * Usuario quien realiza la creación del item
      * @ORM\ManyToOne(targetEntity="User")
@@ -220,6 +226,10 @@ class Item {
     function getParent() {
         return $this->parent;
     }
+    
+    function getFixedOnCycle() {
+        return $this->fixedOnCycle;
+    }
 
     function setTitle($title) {
         $this->title = $title;
@@ -289,6 +299,11 @@ class Item {
         $this->effortTShirt = $effortTShirt;
     }
 
+    function setFixedOnCycle($fixedOnCycle) {
+        $this->fixedOnCycle = $fixedOnCycle;
+    }
+
+    
     /**
      * Sort array of objects by string fields
      * @param array $objects Array of objects to sort.
@@ -417,8 +432,8 @@ class Item {
             case self::STATUS_BEING_WORKED_ON:
                 $langVar = 'backend.item.status_being_worked_on';
                 break;
-            case self::STATUS_NEAR_COMPLETION:
-                $langVar = 'backend.item.status_near_completion';
+            case self::STATUS_BUG_DETECTED:
+                $langVar = 'backend.item.status_bug_detected';
                 break;
             case self::STATUS_READY_FOR_TESTING:
                 $langVar = 'backend.item.status_ready_for_testing';
@@ -474,8 +489,8 @@ class Item {
                 $class = 'label label-default label-notification';
                 $border = 'border-status-3';
                 break;
-            case self::STATUS_NEAR_COMPLETION:
-                $class = 'label label-default label-notification';
+            case self::STATUS_BUG_DETECTED:
+                $class = 'label label-default label-danger';
                 $border = 'border-status-3';
                 break;
             case self::STATUS_READY_FOR_TESTING:

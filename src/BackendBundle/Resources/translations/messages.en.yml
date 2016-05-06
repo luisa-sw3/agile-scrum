@@ -243,7 +243,7 @@ backend:
         status_confirmed: "Confirmed"
         status_not_a_bug: "Not a bug"
         status_being_worked_on: "Being worked on"
-        status_near_completion: "Near completion"
+        status_bug_detected: "Bug detected"
         status_ready_for_testing: "Ready for testing"
         status_testing: "Testing"
         status_canceled: "Canceled"

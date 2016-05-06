@@ -91,7 +91,7 @@ class TimeTrackingController extends Controller {
                     Entity\Item::STATUS_INVESTIGATING,
                     Entity\Item::STATUS_CONFIRMED,
                     Entity\Item::STATUS_BEING_WORKED_ON,
-                    Entity\Item::STATUS_NEAR_COMPLETION,
+                    Entity\Item::STATUS_BUG_DETECTED,
                     Entity\Item::STATUS_TESTING,
             ));
             $order = array('consecutive' => 'DESC');
