@@ -28,13 +28,31 @@ class UserRepository extends EntityRepository {
         $consult = $em->createQuery("
         SELECT u.id, " . $abbr . " AS value, " . $abbr . " AS label
         FROM BackendBundle:User u
-        WHERE u.name LIKE :term ".$projectSQL."
+        WHERE u.name LIKE :term " . $projectSQL . "
         ORDER BY u.name ASC");
         $consult->setParameter('term', $term);
 
         if ($projectId) {
             $consult->setParameter('projectId', $projectId);
         }
+        return $consult->getResult();
+    }
+
+    /**
+     * Permite listar todos los usuarios dentro de un proyecto
+     * @param string $projectId
+     * @return type
+     */
+    public function findUsersByProject($projectId) {
+
+        $em = $this->getEntityManager();
+        $consult = $em->createQuery("
+        SELECT u
+        FROM BackendBundle:User u
+        JOIN BackendBundle:UserProject uspr WITH(u.id = uspr.user)
+        WHERE uspr.project = :projectId");
+        $consult->setParameter('projectId', $projectId);
+
         return $consult->getResult();
     }
 

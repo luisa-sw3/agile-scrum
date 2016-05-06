@@ -1,0 +1,24 @@
+backend_project_reports:
+    path:     /
+    defaults: { _controller: "BackendBundle:Report:index" }
+    methods:  GET
+    
+backend_project_reports_user:
+    path:     /userIndexReport
+    defaults: { _controller: "BackendBundle:Report:indexUser" }
+    methods:  [GET, POST]
+ 
+backend_project_reports_user_select:
+    path:     /userReport/select
+    defaults: { _controller: "BackendBundle:Report:getSprintsByUser" }
+    methods:  [GET, POST]
+    
+backend_project_reports_user_sprint:
+    path:     /userReport
+    defaults: { _controller: "BackendBundle:Report:userReport" }
+    methods:  [GET, POST]
+
+backend_project_reports_project:
+    path:     /project
+    defaults: { _controller: "BackendBundle:Report:indexProject" }
+    methods:  [GET, POST]
