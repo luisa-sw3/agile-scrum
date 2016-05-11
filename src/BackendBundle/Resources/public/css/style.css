@@ -312,3 +312,12 @@ span.worked-time-day {
     font-style: italic;
     margin-left: 15px;
 }
+
+h3.popover-title button.close {
+    margin-top: -3px;
+}
+
+a.edit-track-time {
+    padding: 6px 8px;
+    margin-right: 8px;
+}
