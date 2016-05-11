@@ -61,6 +61,8 @@ backend:
         project: "Project"
         task: "Task"
         description: "Description"
+        today: "Today"
+        yesterday: "Yesterday"
         
     login:
         message: "Dear user, log in to access the admin area"
@@ -241,7 +243,7 @@ backend:
         status_confirmed: "Confirmed"
         status_not_a_bug: "Not a bug"
         status_being_worked_on: "Being worked on"
-        status_near_completion: "Near completion"
+        status_bug_detected: "Bug detected"
         status_ready_for_testing: "Ready for testing"
         status_testing: "Testing"
         status_canceled: "Canceled"
@@ -380,6 +382,7 @@ backend:
             ect: "# Fixed Bugs in Third Cicle"
             ecc: "# Fixed Bugs in Fourth Cicle"
         error: "No Data Available"
+        pdf: "Download PDF"
         
     attachment:
         attachments: "Attachments"

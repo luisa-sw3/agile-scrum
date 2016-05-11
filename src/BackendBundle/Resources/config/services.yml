@@ -19,6 +19,8 @@ services:
             
     time_tracker:
         class: BackendBundle\Services\TimeTracker
+        arguments: 
+            entityManager: "@doctrine.orm.entity_manager"
     
     #servicio para clase de ayuda para implementar formularios
     form_helper:

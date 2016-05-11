@@ -61,6 +61,8 @@ backend:
         project: "Proyecto"
         task: "Tarea"
         description: "Descripción"
+        today: "Hoy"
+        yesterday: "Ayer"
     
     login:
         message: "Ingrese para acceder al área administrativa"
@@ -241,7 +243,7 @@ backend:
         status_confirmed: "Confirmado"
         status_not_a_bug: "No es un error"
         status_being_worked_on: "Trabajo iniciado"
-        status_near_completion: "Cerca de terminar"
+        status_bug_detected: "Incidencia Detectada"
         status_ready_for_testing: "Listo para pruebas"
         status_testing: "Probando"
         status_canceled: "Cancelado"
@@ -379,6 +381,7 @@ backend:
             ect: "# Errores Corregidos en Tercer Ciclo"
             ecc: "# Errores Corregidos en Cuarto Ciclo"
         error: "No Existen Datos"
+        pdf: "Descargar PDF"
         
     attachment:
         attachments: "Archivos Adjuntos"

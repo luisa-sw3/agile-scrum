@@ -1,13 +1,6 @@
 frontend:
     resource: "@FrontendBundle/Resources/config/routing.yml"
-    prefix:   /{_locale}
-
-frontend_redirect:
-    path: /
-    defaults:
-        _controller: FrontendBundle:Default:redirect
-        route: frontend_homepage
-        permanent: true
+    prefix:   /
 
 backend:
     resource: "@BackendBundle/Resources/config/routing.yml"
