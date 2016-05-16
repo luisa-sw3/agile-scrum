@@ -34,7 +34,7 @@ class UpdateBurndownChartCommand extends ContainerAwareCommand {
         $em = $container->get('doctrine')->getManager();
 
         //buscamos los Sprints activos
-        $sprints = $em->getRepository('BackendBundle:Sprint')->findByStatus(Entity\Sprint::STATUS_IN_PROCESS);
+        $sprints = $em->getRepository('BackendBundle:Sprint')->findByStatus(null, Entity\Sprint::STATUS_IN_PROCESS);
 
         if (!empty($sprints)) {
 
