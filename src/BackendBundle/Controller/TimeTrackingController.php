@@ -33,20 +33,7 @@ class TimeTrackingController extends Controller {
                 ->findUserTimeTracking($this->getUser()->getId(), $search);
 
         //buscamos si hay alguna tarea activa para el usuario logueado
-        $searchActive = array(
-            'user' => $this->getUser()->getId(),
-            'endTime' => null
-        );
-        $order = array('date' => 'DESC', 'startTime' => 'DESC');
-        $timeTrack = $em->getRepository('BackendBundle:TimeTracking')->findOneBy($searchActive, $order);
-        if (!$timeTrack instanceof Entity\TimeTracking) {
-            $timeTrack = new Entity\TimeTracking();
-            $timeTrack->setUser($this->getUser());
-        } else {
-            $workedTime = $this->container->get('time_tracker')
-                    ->getSecondsBetweenDates($timeTrack->getStartTime(), Util::getCurrentDate());
-            $timeTrack->setWorkedTime($workedTime);
-        }
+        $timeTrack = $this->container->get('time_tracker')->getActiveTimeTrack();
         $form = $this->createForm(TimeTrackType::class, $timeTrack);
 
         $searchForm = $this->createForm(SearchTimeTrackType::class);

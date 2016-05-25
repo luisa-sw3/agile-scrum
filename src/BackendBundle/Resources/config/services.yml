@@ -21,6 +21,8 @@ services:
         class: BackendBundle\Services\TimeTracker
         arguments: 
             entityManager: "@doctrine.orm.entity_manager"
+            tokenStorage: "@security.token_storage"
+            container:      "@service_container"
     
     #servicio para clase de ayuda para implementar formularios
     form_helper:

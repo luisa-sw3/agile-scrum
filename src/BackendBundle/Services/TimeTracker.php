@@ -4,6 +4,7 @@ namespace BackendBundle\Services;
 
 use BackendBundle\Entity as Entity;
 use Doctrine\ORM\EntityManager;
+use Util\Util;
 
 /*
  * TimeTracker
@@ -15,14 +16,16 @@ class TimeTracker {
     const DEFAULT_DAYS_TO_SEARCH = 8;
 
     private $em;
+    private $tokenStorage;
 
     /**
      * Constructor del servicio
      * @author Cesar Giraldo <cesargiraldo1108@gmail.com> 28/04/2016
      * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager) {
+    public function __construct(EntityManager $entityManager, $tokenStorage) {
         $this->em = $entityManager;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -80,6 +83,35 @@ class TimeTracker {
             return $this->getElapsedTime($workedTime);
         }
         return $workedTime;
+    }
+
+    
+    /**
+     * Permite verificar si el usuario logueado tiene un registro de tiempo
+     * @author Cesar Giraldo <cesargiraldo1108@gmail.com> May 25 2016
+     * @return \BackendBundle\Entity\TimeTracking
+     */
+    public function getActiveTimeTrack() {
+
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        if ($user) {
+            $searchActive = array(
+                'user' => $user->getId(),
+                'endTime' => null
+            );
+            $order = array('date' => 'DESC', 'startTime' => 'DESC');
+            $timeTrack = $this->em->getRepository('BackendBundle:TimeTracking')->findOneBy($searchActive, $order);
+            if (!$timeTrack instanceof Entity\TimeTracking) {
+                $timeTrack = new Entity\TimeTracking();
+                $timeTrack->setUser($user);
+            } else {
+                $workedTime = $this->getSecondsBetweenDates($timeTrack->getStartTime(), Util::getCurrentDate());
+                $timeTrack->setWorkedTime($workedTime);
+            }
+            return $timeTrack;
+        }
+        return null;
     }
 
 }

@@ -39,7 +39,7 @@
             </div>
             <div class="form-group col-lg-3 col-md-6 col-xs-6">
                 <div class="col-xs-12 text-center no-padding-sides">
-                    <div class="clock"></div>
+                    <div class="clock clock-local"></div>
                     <div class="message"></div>
                 </div>
                 <div class="col-xs-12 text-center">
@@ -88,7 +88,7 @@
 {% endblock %}
 
 {% block functions_javascript %}
-    var clock;
+    var clockLocal;
 
     {% set dateFormat = app_settings.getDefaultDateFormat() %}
     var searchStartDate = "{{search.startDate|date(dateFormat)}}";
@@ -189,14 +189,16 @@
 
 {% block scripts %}
     
-    clock = $('.clock').FlipClock({
+    clockLocal = $('.clock-local').FlipClock({
         clockFace: 'HourlyCounter'
     });
+    
+    
     {% if time_track.startTime is not empty %}
-        clock.setTime({{time_track.workedTime}});
+        clockLocal.setTime({{time_track.workedTime}});
         $(".continue-time").addClass('hidden');
     {% else %}
-        clock.stop();
+        clockLocal.stop();
         $(".continue-time").removeClass('hidden');
     {% endif %}
 
@@ -269,8 +271,10 @@
                             $("#start-time").addClass('hidden');
                             $("#stop-time").removeClass('hidden');
                             $("#stop-time").attr('time-id', resp.timeId)
-                            clock.setTime(0);
-                            clock.start();
+                            clockLocal.setTime(0);
+                            clockMain.setTime(0);
+                            clockLocal.start();
+                            clockMain.start();
                             $(".continue-time").addClass('hidden');
                         } else {
                             bootbox.alert(resp.msg);
@@ -311,8 +315,10 @@
                         $("#stop-time").addClass('hidden');
                         $("#start-time").removeClass('hidden');
                         $("#stop-time").attr('time-id', '')
-                        clock.setTime(0);
-                        clock.stop();
+                        clockLocal.setTime(0);
+                        clockMain.setTime(0);
+                        clockLocal.stop();
+                        clockMain.stop();
                         $("#backendbundle_time_track_type_taskId").select2("val", "");
                         $("#backendbundle_time_track_type_description").val('');
                         updateTimeList(searchStartDate, searchEndDate);
