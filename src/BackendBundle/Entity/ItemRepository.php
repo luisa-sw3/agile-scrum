@@ -125,12 +125,6 @@ class ItemRepository extends EntityRepository {
 
         $repository = $this->getEntityManager();
 
-        $consulta = " Select i FROM BackendBundle:Item i ";
-        $condicion = "";
-
-        $query = $repository->createQuery($consulta . $condicion);
-
-
         // lista de items (por tipo) de un proyecto
         if ($usrId == 'all' && $sprintId == 'all' && $status == 'all') {
             $query = $repository->createQuery(" 
@@ -498,6 +492,83 @@ class ItemRepository extends EntityRepository {
         $query->setParameter('usrId', $usrId);
         $query->setParameter('sId', $sprintId);
         $query->setParameter('type', $type);
+
+        return $query->getSingleScalarResult();
+    }
+
+    /**
+     * Permite calcular el numero de ciclos en un proyecto segun 
+     * el criterio de busqueda
+     * @author Luisa F. Pereira 28/05/2016
+     * @param string $projectId Identificador del projecto
+     * @param string $usrId Id del usuario
+     * @param string $sprintId Id del sprint
+     * @param integer $cycleNum El numero de ciclo que se desea buscar
+     * @return  total veces que un ciclo especifico aparece en un sprint o proyecto
+     */
+    public function findFixedOnCycle($projectId, $usrId, $sprintId, $cycleNum) {
+
+        $repository = $this->getEntityManager();
+
+        // cuenta las veces que se arreglo un defecto en el proyecto
+        if ($usrId == 'all' && $sprintId == 'all') {
+            $query = $repository->createQuery(" 
+            Select COUNT(i) AS countCycle
+            FROM BackendBundle:Item i
+            WHERE i.project = :projectId
+            AND i.fixedOnCycle = :cycle");
+
+            $query->setParameter('projectId', $projectId);
+            $query->setParameter('cycle', $cycleNum);
+
+            return $query->getSingleScalarResult();
+        }
+
+        // cuenta las veces que se arreglo un defecto en un sprint X
+        if ($usrId == 'all') {
+            $query = $repository->createQuery(" 
+            Select COUNT(i) AS countCycle
+            FROM BackendBundle:Item i
+            WHERE i.project = :projectId
+            AND i.sprint = :sId
+            AND i.fixedOnCycle = :cycle");
+
+            $query->setParameter('projectId', $projectId);
+            $query->setParameter('sId', $sprintId);
+            $query->setParameter('cycle', $cycleNum);
+
+            return $query->getSingleScalarResult();
+        }
+
+        // cuenta las veces que se arreglo un defecto por un usuario X
+        if ($sprintId == 'all') {
+            $query = $repository->createQuery(" 
+            Select COUNT(i) AS countCycle
+            FROM BackendBundle:Item i
+            WHERE i.project = :projectId
+            AND i.designedUser = :usrId
+            AND i.fixedOnCycle = :cycle");
+
+            $query->setParameter('projectId', $projectId);
+            $query->setParameter('usrId', $usrId);
+            $query->setParameter('cycle', $cycleNum);
+
+            return $query->getSingleScalarResult();
+        }
+
+        // cuenta las veces que se arreglo un defecto en un sprint X con un usuario Y
+        $query = $repository->createQuery(" 
+            Select COUNT(i) AS countCycle
+            FROM BackendBundle:Item i
+            WHERE i.project = :projectId
+            AND i.designedUser = :usrId
+            AND i.sprint = :sId
+            AND i.fixedOnCycle = :cycle");
+
+        $query->setParameter('projectId', $projectId);
+        $query->setParameter('usrId', $usrId);
+        $query->setParameter('sId', $sprintId);
+        $query->setParameter('cycle', $cycleNum);
 
         return $query->getSingleScalarResult();
     }
