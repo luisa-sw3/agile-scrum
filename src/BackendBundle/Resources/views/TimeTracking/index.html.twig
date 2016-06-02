@@ -39,7 +39,7 @@
             </div>
             <div class="form-group col-lg-3 col-md-6 col-xs-6">
                 <div class="col-xs-12 text-center no-padding-sides">
-                    <div class="clock"></div>
+                    <div class="clock clock-local"></div>
                     <div class="message"></div>
                 </div>
                 <div class="col-xs-12 text-center">
@@ -84,10 +84,11 @@
         <div class="table-responsive col-lg-12" id="time-list">
         </div>
     </div>
+      
 {% endblock %}
 
 {% block functions_javascript %}
-    var clock;
+    var clockLocal;
 
     {% set dateFormat = app_settings.getDefaultDateFormat() %}
     var searchStartDate = "{{search.startDate|date(dateFormat)}}";
@@ -106,22 +107,98 @@
             {
                 if (resp.result == '__OK__') {
                     $("#time-list").html(resp.html);
+                    updatePopovers();
                 } 
             }
+        });
+    }
+    
+    function updatePopovers() {
+        $(".edit-track-time").popover({
+            html: true,
+            title : '<span class="text-info"><strong>Edit Time</strong></span> <button type="button" class="close close-popup"><i class="fa fa-times"></i></button>',
+        }).on('shown.bs.popover', function () {
+
+            $(this).data("bs.popover").tip().css('maxWidth', '320px');
+            $(this).data("bs.popover").tip().css('width', '320px');
+        
+            var timeId = $(this).attr('time-id');
+
+            $('#date-for-'+timeId).datetimepicker({
+                format: 'DD/MM/YYYY',
+                date: $(this).attr('date')
+            });
+            
+            $('#start-time-for-'+timeId).datetimepicker({
+                format: 'HH:mm:ss',
+                date: $(this).attr('date')+' '+$(this).attr('start-time')
+            });
+            
+            $('#end-time-for-'+timeId).datetimepicker({
+                format: 'HH:mm:ss',
+                date: $(this).attr('date')+' '+$(this).attr('end-time')
+            });
+            
+            $('.close-popup').click(function (){
+                $(".edit-track-time").popover('hide');
+            });
+            
+            
+            {# Codigo para editar un registro de tiempo existente #}
+            $(".send-form-edit-time").click(function( e ) {
+                
+                var date = $('#date-for-'+timeId).data("DateTimePicker").date();
+                date = date.format('Y-MM-DD');
+                
+                var startTime = $('#start-time-for-'+timeId).data("DateTimePicker").date();
+                startTime = startTime.format('HH:mm:ss');
+                
+                var endTime = $('#end-time-for-'+timeId).data("DateTimePicker").date();
+                endTime = endTime.format('HH:mm:ss');
+                
+                $(this).attr('disabled','disabled');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('backend_time_tracking_edit_time')}}",
+                    dataType: 'json',
+                    data: {timeId: timeId, date: date, startTime: startTime, endTime: endTime},
+                    async: false,
+                    success: function (resp)
+                    {
+                        $(this).removeAttr('disabled');
+                        if (resp.result == '__OK__') {
+                            updateTimeList(searchStartDate, searchEndDate);
+                            $('.close-popup').trigger('click');
+                        } else {
+                            bootbox.alert(resp.msg);
+                        }
+                    },
+                    error: function (resp)
+                    {
+                        $(this).removeAttr('disabled');
+                        bootbox.alert("{{'backend.global.unknown_error'|trans}}");
+                    }
+                });
+                
+            });
+            
         });
     }
     
 {% endblock %}
 
 {% block scripts %}
-    clock = $('.clock').FlipClock({
+    
+    clockLocal = $('.clock-local').FlipClock({
         clockFace: 'HourlyCounter'
     });
+    
+    
     {% if time_track.startTime is not empty %}
-        clock.setTime({{time_track.workedTime}});
+        clockLocal.setTime({{time_track.workedTime}});
         $(".continue-time").addClass('hidden');
     {% else %}
-        clock.stop();
+        clockLocal.stop();
         $(".continue-time").removeClass('hidden');
     {% endif %}
 
@@ -166,8 +243,8 @@
     });
 
     $("#backendbundle_time_track_type_project").trigger('change');
-
-
+    
+    
     {# Codigo para iniciar el contador de tiempo para una tarea especifica #}
     $("#form-time").submit(function (e) {
         e.preventDefault();
@@ -194,8 +271,10 @@
                             $("#start-time").addClass('hidden');
                             $("#stop-time").removeClass('hidden');
                             $("#stop-time").attr('time-id', resp.timeId)
-                            clock.setTime(0);
-                            clock.start();
+                            clockLocal.setTime(0);
+                            clockMain.setTime(0);
+                            clockLocal.start();
+                            clockMain.start();
                             $(".continue-time").addClass('hidden');
                         } else {
                             bootbox.alert(resp.msg);
@@ -236,8 +315,10 @@
                         $("#stop-time").addClass('hidden');
                         $("#start-time").removeClass('hidden');
                         $("#stop-time").attr('time-id', '')
-                        clock.setTime(0);
-                        clock.stop();
+                        clockLocal.setTime(0);
+                        clockMain.setTime(0);
+                        clockLocal.stop();
+                        clockMain.stop();
                         $("#backendbundle_time_track_type_taskId").select2("val", "");
                         $("#backendbundle_time_track_type_description").val('');
                         updateTimeList(searchStartDate, searchEndDate);
@@ -254,8 +335,6 @@
             });
         }
     });
-    
-    //edit-time-search
     
     {# Codigo para realizar la eliminacion de registros de tiempo #}
     $( "#time-list" ).on( "click", ".delete-time", function( event ) {
@@ -373,8 +452,6 @@
     $("#backendbundle_search_time_track_type_endDate").on("dp.change", function (e) {
         $('#backendbundle_search_time_track_type_startDate').data("DateTimePicker").maxDate(e.date);
     });
-    
-    //
     
     {# Codigo para desplegar el buscador de tiempos #}
     $( "#time-list" ).on( "click", ".edit-time-search", function( event ) {

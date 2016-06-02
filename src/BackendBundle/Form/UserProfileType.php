@@ -36,6 +36,10 @@ class UserProfileType extends AbstractType {
                     'required' => false,
                     'label' => $this->translator->trans('backend.user.cellphone')
                 ))
+                ->add('email', Type\EmailType::class, array(
+                    'required' => true,
+                    'label' => $this->translator->trans('backend.user.email')
+                ))
                 ->add('biography', Type\TextareaType::class, array(
                     'required' => false,
                     'label' => $this->translator->trans('backend.user.biography')

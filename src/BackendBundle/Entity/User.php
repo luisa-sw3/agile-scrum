@@ -53,7 +53,7 @@ class User implements UserInterface, \Serializable {
      * Correo electrónico del usuario
      * @ORM\Column(name="user_email", type="string", length=100, nullable=false, unique=true)
      * @Assert\NotBlank()
-     * @Assert\Email()
+     * @Assert\Email(checkMX=true)
      */
     protected $email;
 

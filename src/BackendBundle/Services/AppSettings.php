@@ -58,6 +58,10 @@ class AppSettings {
         return Entity\Settings::HOUR_FORMAT_3;
     }
     
+    public function getDefaultHourFormatWithSeconds() {
+        return Entity\Settings::HOUR_FORMAT_4;
+    }
+    
     public function getDefaultFullDateFormat() {
         return Entity\Settings::DATE_FORMAT_1.' '.Entity\Settings::HOUR_FORMAT_3;
     }

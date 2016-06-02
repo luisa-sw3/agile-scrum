@@ -92,6 +92,7 @@ backend:
         confirmed_account_message: "Account confirmed successfully"
         not_found_message: "User not found"
         view: "View User"
+        email_repeated: "This email this belongs to an existing account."
     
     project:
         projects: "Projects"
