@@ -165,20 +165,6 @@
                     }
                 });
 
-
-                var clockMain;
-                
-                clockMain = $('.clock-main').FlipClock({
-                    clockFace: 'HourlyCounter'
-                });
-                
-                {% set main_time_track = time_tracker.getActiveTimeTrack() %}
-                {% if time_tracker.getActiveTimeTrack().startTime is not empty %}
-                    clockMain.setTime({{main_time_track.workedTime}});
-                {% else %}
-                    clockMain.stop();
-                {% endif %}
-                
                 {% block scripts %}
                 {% endblock %}
                 });

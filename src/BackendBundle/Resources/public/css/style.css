@@ -311,35 +311,4 @@ span.worked-time-day {
     font-size: 15px;
     font-style: italic;
     margin-left: 15px;
-<<<<<<< HEAD
 }
-=======
-}
-
-h3.popover-title button.close {
-    margin-top: -3px;
-}
-
-a.edit-track-time {
-    padding: 6px 8px;
-    margin-right: 8px;
-}
-
-div.clock-main {
-    cursor: pointer;
-}
-
-div.clock-main ul.flip {
-    cursor: pointer;
-}
-
-div.clock-main ul.flip .flip-clock-before, div.clock-main ul.flip .flip-clock-active, 
-div.clock-main ul.flip .flip-clock-active .up, div.clock-main ul.flip .flip-clock-active .down{
-    cursor: pointer;
-}
-
-div.clock-main span.flip-clock-dot {
-    width: 5px;
-    height: 5px;
-}
->>>>>>> refs/remotes/cesar-giraldo/master

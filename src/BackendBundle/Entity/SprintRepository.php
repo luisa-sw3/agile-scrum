@@ -35,23 +35,17 @@ class SprintRepository extends EntityRepository {
      * @param string $status Id del estado
      * @return  array[Sprint] de horas estimadas
      */
-    public function findByStatus($projectId = null, $status) {
+    public function findByStatus($projectId, $status) {
 
         $repository = $this->getEntityManager();
-
-        $extraQuery = '';
-        if ($projectId) {
-            $extraQuery = ' AND s.project = :projectId';
-        }
 
         $query = $repository->createQuery(" 
             Select s 
             FROM BackendBundle:Sprint s
-            WHERE s.status = :status " . $extraQuery);
+            WHERE s.project = :projectId
+            AND s.status = :status");
 
-        if ($projectId) {
-            $query->setParameter('projectId', $projectId);
-        }
+        $query->setParameter('projectId', $projectId);
         $query->setParameter('status', $status);
 
         return $query->getResult();

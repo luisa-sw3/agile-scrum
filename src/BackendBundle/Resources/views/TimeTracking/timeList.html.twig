@@ -1,6 +1,6 @@
 {% spaceless %}
 {% set dateFormat = 'd/m/Y' %}
-{% set hourFormat = app_settings.getDefaultHourFormatWithSeconds() %}
+{% set hourFormat = app_settings.getDefaultHourFormat() %}
 <legend class="no-border">
     {{search.startDate|date(dateFormat)}} {{'backend.global.to'|trans}} {{search.endDate|date(dateFormat)}}
     <a class="btn btn-default btn-sm edit-time-search"><i class="fa fa-search"></i></a>
@@ -11,7 +11,7 @@
         <tr>
             <th>{{ 'backend.item.description'|trans }}</th>
             <th>{{ 'backend.project.name'|trans }}</th>
-            <th width="230px">{{ 'backend.time_tracking.time'|trans }}</th>
+            <th width="150px">{{ 'backend.time_tracking.time'|trans }}</th>
             <th width="100px">{{ 'backend.global.options'|trans }}</th>
         </tr>
     </thead>
@@ -45,47 +45,10 @@
                 <td id='description-time-{{time.id}}'>{{ time }}</td>
                 <td>{{ time.project.name }}</td>
                 <td>
-                    <a time-id="{{time.id}}" date="{{time.date|date("Y-m-d")}}" 
-                       start-time="{{time.startTime|date('H:i:s')}}" 
-                       end-time="{{time.endTime|date('H:i:s')}}" 
-                       tabindex="0" class="edit-track-time btn btn-primary pull-left" role="button" data-toggle="popover" data-trigger="click" data-placement="left" data-container="body" data-html="true"
-                        data-content='
-                        <div id="popover-content">
-                        <form role="form" method="post" onsubmit="return false;">
-                            <div class="form-group col-xs-12 no-padding-sides">
-                                <label>Date</label>
-                                <div class="input-group date" id="date-for-{{time.id}}">
-                                    <input type="text" class="form-control" placeholder="Date"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="form-group col-xs-6  no-padding-left">
-                                <label>Start Time</label>
-                                <div class="input-group date" id="start-time-for-{{time.id}}">
-                                    <input type="text" class="form-control" placeholder="Start Time" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="form-group col-xs-6  no-padding-right">
-                                <label>End Time</label>
-                                <div class="input-group date" id="end-time-for-{{time.id}}">
-                                    <input type="text" class="form-control" placeholder="End Time"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button class="btn btn-primary btn-block send-form-edit-time" time-id="{{time.id}}">Save Changes</button>
-                            </div>
-                        </form>
-                        </div>'><i class="fa fa-edit"></i></a>
-                        {{ time.getTimeOnNaturalLanguage }}<br>
-                        {{ time.startTime|date(hourFormat) }} / {{ time.endTime|date(hourFormat) }}
+                    {{ time.getTimeOnNaturalLanguage }}
+                    {#{{ time.workedTime }}#}
+                    <br>
+                    {{ time.startTime|date(hourFormat) }} / {{ time.endTime|date(hourFormat) }}
                 </td>
                 <td>
                     <a class="btn btn-success btn-md continue-time" title="{{'backend.time_tracking.start_task'|trans}}" time-id="{{time.id}}" item-id="{% if time.item is not empty %}{{time.item.id}}{% endif %}" project-id="{{time.project.id}}" href="javascript:void(0);">
@@ -98,12 +61,12 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">{{ 'backend.time_tracking.empty_list'|trans }}</td>
+                <td colspan="5">{{ 'backend.time_tracking.empty_list'|trans }}</td>
             </tr>
         {% endfor %}
         {% if time_tracking|length > 0  %}
             <tr>
-                <td>&nbsp;</td>
+                <td colspan="2">&nbsp;</td>
                 <td><strong>{{'backend.time_tracking.total_time'|trans}}</strong></td>
                 <td><strong>{{ time_tracker.getElapsedTime(workedTime) }}</strong></td>
                 <script type="text/javascript">

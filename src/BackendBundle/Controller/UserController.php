@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use BackendBundle\Form\UserProfileType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use BackendBundle\Entity\User;
 
 class UserController extends Controller {
 
@@ -42,7 +41,6 @@ class UserController extends Controller {
         $form = $this->createForm(UserProfileType::class, $user);
 
         $previousPassword = $user->getPassword();
-        $previousEmail = $user->getEmail();
 
         $form->handleRequest($request);
 
@@ -60,15 +58,6 @@ class UserController extends Controller {
                 $encoder = $this->container->get('security.password_encoder');
                 $password = $encoder->encodePassword($user, $plainPassword);
                 $user->setPassword($password);
-            }
-            
-            //verificamos que no haya ingresado un email repetido
-            if ($user->getEmail() != $previousEmail) {
-                $otherUser = $em->getRepository('BackendBundle:User')->findOneByEmail($user->getEmail());
-                if ($otherUser instanceof User && $otherUser->getId() != $user->getId()) {
-                    $this->get('session')->getFlashBag()->add('messageErrorProfile', $this->get('translator')->trans('backend.user.email_repeated'));
-                    return $this->redirectToRoute('backend_user_edit_profile');
-                }
             }
 
             //verificamos si se sube la imagen de perfil
