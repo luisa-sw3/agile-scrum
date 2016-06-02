@@ -15,11 +15,11 @@
     </div>
     <!-- /.row -->
 
+    {{ filters.showMessage('messageSuccessProfile', 'success')}}
+    {{ filters.showMessage('messageErrorProfile', 'danger')}}
+    
     <div class="row">
-
         {{ form_start(form, {'action': path('backend_user_update_profile'), 'method': 'POST'}) }}
-        
-        
             <div class="col-lg-6">
                 <div class="form-group">
                     {{ form_label(form.name)}}
@@ -32,6 +32,8 @@
                     {{ form_widget(form.lastname, {'attr':{'class':'form-control title-case'}}) }}
                     {{ form_errors(form.lastname) }}
                 </div>
+                
+                
 
                 <div class="form-group">
                     {{ form_label(form.cellphone)}}
@@ -47,8 +49,9 @@
             </div>
             <div class="col-lg-6">
                 <div class="form-group">
-                    <label>{{'backend.user.email'|trans}}</label>
-                    <p class="form-control-static">{{user.email}}</p>
+                    {{ form_label(form.email)}}
+                    {{ form_widget(form.email, {'attr':{'class':'form-control lower-case'}}) }}
+                    {{ form_errors(form.email) }}
                 </div>
 
                 <div class="form-group">
@@ -68,9 +71,13 @@
                     {{ form_errors(form.profileImage) }}
                 </div>
                 <div class="form-group">
-                    <a href="{{ asset('uploads/users/' ~ app.user.profileImagePath)  }}" class="fancybox">
-                        <img class="thumbnail" src="{{ asset('uploads/users/' ~ app.user.profileImagePath) | imagine_filter('thumbnail_120_90') }}" />
-                    </a>
+                    {% if app.user.profileImagePath is not empty %}
+                        <a href="{{ asset('uploads/users/' ~ app.user.profileImagePath)  }}" class="fancybox">
+                            <img class="thumbnail" src="{{ asset('uploads/users/' ~ app.user.profileImagePath) | imagine_filter('thumbnail_120_90') }}" />
+                        </a>
+                    {% else %}
+                        <i class="fa fa-user fa-5x"></i>
+                    {% endif %}
                 </div>
                 
             </div>

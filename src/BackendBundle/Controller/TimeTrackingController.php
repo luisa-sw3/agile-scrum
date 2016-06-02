@@ -27,28 +27,15 @@ class TimeTrackingController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         $currentDate = Util::getCurrentDate();
-        $search = array('startDate' => $currentDate->modify('-'.TimeTracker::DEFAULT_DAYS_TO_SEARCH.' days'), 'endDate' => Util::getCurrentDate());
+        $search = array('startDate' => $currentDate->modify('-' . TimeTracker::DEFAULT_DAYS_TO_SEARCH . ' days'), 'endDate' => Util::getCurrentDate());
 
         $timeTracking = $em->getRepository('BackendBundle:TimeTracking')
                 ->findUserTimeTracking($this->getUser()->getId(), $search);
 
         //buscamos si hay alguna tarea activa para el usuario logueado
-        $searchActive = array(
-            'user' => $this->getUser()->getId(),
-            'endTime' => null
-        );
-        $order = array('date' => 'DESC', 'startTime' => 'DESC');
-        $timeTrack = $em->getRepository('BackendBundle:TimeTracking')->findOneBy($searchActive, $order);
-        if (!$timeTrack instanceof Entity\TimeTracking) {
-            $timeTrack = new Entity\TimeTracking();
-            $timeTrack->setUser($this->getUser());
-        } else {
-            $workedTime = $this->container->get('time_tracker')
-                    ->getSecondsBetweenDates($timeTrack->getStartTime(), Util::getCurrentDate());
-            $timeTrack->setWorkedTime($workedTime);
-        }
+        $timeTrack = $this->container->get('time_tracker')->getActiveTimeTrack();
         $form = $this->createForm(TimeTrackType::class, $timeTrack);
-        
+
         $searchForm = $this->createForm(SearchTimeTrackType::class);
 
         return $this->render('BackendBundle:TimeTracking:index.html.twig', array(
@@ -139,7 +126,7 @@ class TimeTrackingController extends Controller {
 
             if ($item instanceof Entity\Item &&
                     $this->container->get('access_control')->isAllowedProject($item->getProject()->getId())) {
-                
+
                 $timeTrack->setItem($item);
                 $timeTrack->setProject($item->getProject());
 
@@ -193,7 +180,7 @@ class TimeTrackingController extends Controller {
 
                     $response['result'] = '__OK__';
                 } else {
-                    $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message').".";
+                    $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message') . ".";
                 }
             } else {
                 $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
@@ -218,11 +205,11 @@ class TimeTrackingController extends Controller {
 
         $startDate = $request->request->get('startDate');
         $startDate = new \DateTime($startDate);
-        
+
         $endDate = $request->request->get('endDate');
         $endDate = new \DateTime($endDate);
         $endDate->setTime(23, 59, 59);
-        
+
         $search = array('startDate' => $startDate, 'endDate' => $endDate);
 
         $timeTracking = $em->getRepository('BackendBundle:TimeTracking')
@@ -261,6 +248,62 @@ class TimeTrackingController extends Controller {
                 $em->flush();
 
                 $response['result'] = '__OK__';
+            } else {
+                $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
+            }
+        } else {
+            $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
+        }
+
+        return new JsonResponse($response);
+    }
+
+    public function editTimeAction(Request $request) {
+        
+        $response = array('result' => '__KO__', 'msg' => '');
+        $em = $this->getDoctrine()->getManager();
+
+        $timeTrackId = trim(strip_tags($request->request->get('timeId')));
+
+        if ($timeTrackId != '') {
+            $timeTrack = $em->getRepository('BackendBundle:TimeTracking')->find($timeTrackId);
+
+            if ($timeTrack instanceof Entity\TimeTracking &&
+                    $this->container->get('access_control')->isAllowedProject($timeTrack->getProject()->getId())) {
+
+                if (!empty($timeTrack->getEndTime())) {
+                    
+                    $date = new \DateTime(trim(strip_tags($request->request->get('date'))));
+                    $date->setTime(00, 00, 00);
+                    $timeTrack->setDate($date);
+                    
+                    
+                    $startTime = trim(strip_tags($request->request->get('startTime')));
+                    $startTime = explode(':', $startTime);
+                    if (count($startTime) == 3) {
+                        $dateStartTime = clone $date;
+                        $dateStartTime->setTime($startTime[0], $startTime[1], $startTime[2]);
+                        $timeTrack->setStartTime($dateStartTime);
+                    }
+                    
+                    $endTime = trim(strip_tags($request->request->get('endTime')));
+                    $endTime = explode(':', $endTime);
+                    if (count($endTime) == 3) {
+                        $dateEndTime = clone $date;
+                        $dateEndTime->setTime($endTime[0], $endTime[1], $endTime[2]);
+                        $timeTrack->setEndTime($dateEndTime);
+                    }
+                   
+                    $workedTime = $this->container->get('time_tracker')
+                            ->getSecondsBetweenDates($timeTrack->getStartTime(), $timeTrack->getEndTime());
+                    $timeTrack->setWorkedTime($workedTime);
+                    $em->persist($timeTrack);
+                    $em->flush();
+
+                    $response['result'] = '__OK__';
+                } else {
+                    $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message') . ".";
+                }
             } else {
                 $response['msg'] = $this->get('translator')->trans('backend.item.not_found_message');
             }

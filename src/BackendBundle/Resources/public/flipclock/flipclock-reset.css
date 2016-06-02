@@ -58,3 +58,20 @@ and open the template in the editor.
 .flip-clock-dot.bottom {
     bottom: 7px;
 }
+
+.clock-main {
+    margin-top: 10px; 
+}
+
+.clock-main span.flip-clock-label {
+    display: none;
+}
+
+.clock-main .flip-clock-dot {
+    left: 1px;
+    background: #c0c0c0 none repeat scroll 0 0;
+}
+
+.clock-main .flip-clock-divider {
+    width: 8px;
+}
